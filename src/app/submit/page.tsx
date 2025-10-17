@@ -241,7 +241,7 @@ export default function SubmitPage() {
               >
                 {uploading ? "Submitting..." : "Submit"}
               </button>
-              
+
               {/* Image positioned below the card */}
               <div
                 className="absolute -top-24 md:-top-26 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
