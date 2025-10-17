@@ -8,7 +8,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const { data: session, status } = useSession();
   const [isChecking, setIsChecking] = useState(true);
-
+ console.log(session?.user.accessToken)
   useEffect(() => {
     if (status === "loading") return; // Wait for session to load
 
