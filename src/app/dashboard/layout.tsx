@@ -1,12 +1,16 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { AuthGuard } from "@/components/auth-guard"
-import { ThemeProvider } from "@/lib/theme-context"
-import { DashboardSidebar } from "@/components/dashboard-sidebar"
+import { AuthGuard } from "@/components/auth-guard";
+import { ThemeProvider } from "@/lib/theme-context";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <ThemeProvider>
       <AuthGuard>
@@ -16,5 +20,5 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </AuthGuard>
     </ThemeProvider>
-  )
+  );
 }

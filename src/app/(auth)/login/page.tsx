@@ -18,9 +18,11 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError("");
 
     const res = await signIn("credentials", {
@@ -28,12 +30,17 @@ export default function LoginPage() {
       email,
       password,
     });
+    console.log("🔄 SignIn response:", res);
 
     if (res?.error) {
-      setError("Invalid email or password");
-    } else {
+      setError("Invalid credentials. Please try again.");
+    } else if (res?.ok) {
       router.push("/dashboard");
+    } else {
+      setError("Something went wrong. Please try again.");
     }
+
+    setLoading(false);
   };
 
   return (
@@ -51,7 +58,8 @@ export default function LoginPage() {
                 Welcome!
               </h1>
               <p className="text-[#6C757D] leading-[150%] text-[16px] ">
-                Sign in to book, manage, or host your kitchen spaces effortlessly.
+                Sign in to book, manage, or host your kitchen spaces
+                effortlessly.
               </p>
             </div>
 
@@ -84,7 +92,11 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+                    {showPassword ? (
+                      <EyeOff className="h-5 w-5" />
+                    ) : (
+                      <Eye className="h-5 w-5" />
+                    )}
                   </button>
                 </div>
               </div>
@@ -117,7 +129,7 @@ export default function LoginPage() {
                 type="submit"
                 className="w-full bg-[#9B5DE5] hover:bg-primary-hover text-white"
               >
-                Sign In
+                {loading ? "Loading..." : "Sign In"}
               </Button>
             </form>
           </div>

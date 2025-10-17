@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 const coiny = Coiny({
   variable: "--font-coiny",
   subsets: ["latin"],
-  weight: "400", 
+  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -36,9 +36,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${coiny.variable} antialiased`}
       >
         <SessionWrapper>
-
-
-        <TanstackProvider>{children}</TanstackProvider>
+          <TanstackProvider>{children}</TanstackProvider>
         </SessionWrapper>
       </body>
     </html>
