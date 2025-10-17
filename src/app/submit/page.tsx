@@ -5,27 +5,40 @@ import type React from "react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { useMutation } from "@tanstack/react-query";
+import { formSubmission } from "@/lib/api";
+import { log } from "console";
 
 export default function SubmitPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     childName: "",
-    childAge: "",
+    age: 0,
     quote: "",
-    photo: null as string | null,
+    photos: null as File | null,
   });
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const formMutation = useMutation({
+    mutationKey: ["submission"],
+    mutationFn: (data: FormData) => formSubmission(data),
+    onSuccess:()=>{
+     router.push("/thank-you");
+    },
+    onError:()=>{
+      console.log('error')
+    }
+  });
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData({ ...formData, photo: reader.result as string });
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    setFormData((prev) => ({ ...prev, photos: file }));
+
+    const objectUrl = URL.createObjectURL(file);
+    setPreview(objectUrl);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -33,25 +46,28 @@ export default function SubmitPage() {
     if (!agreed) return;
 
     setUploading(true);
-
-    // Store in localStorage
-    const submissions = JSON.parse(localStorage.getItem("moments") || "[]");
-    const newSubmission = {
-      id: Date.now(),
-      ...formData,
-      timestamp: new Date().toISOString(),
-    };
-    submissions.push(newSubmission);
-    localStorage.setItem("moments", JSON.stringify(submissions));
-
-    // Simulate upload delay
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    router.push("/thank-you");
+    try {
+      const formDataToSent = new FormData();
+      formDataToSent.append("childName", formData.childName);
+      formDataToSent.append("age", String(formData.age));
+      formDataToSent.append("quote", formData.quote);
+      if (formData.photos) {
+        formDataToSent.append("photos", formData.photos);
+      }
+      await formMutation.mutateAsync(formDataToSent);
+      // Store in localStorage if needed
+      // localStorage.setItem("submission", JSON.stringify(formData));
+ 
+    } catch (error) {
+      console.error("Submission failed", error);
+      // Optionally show an error message to the user
+    } finally {
+      setUploading(false);
+    }
   };
 
   const isFormValid =
-    formData.childName && formData.quote && formData.photo && agreed;
+    formData.childName && formData.quote && formData.photos && agreed;
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -114,9 +130,9 @@ export default function SubmitPage() {
                 </label>
                 <input
                   type="number"
-                  value={formData.childAge}
+                  value={formData.age}
                   onChange={(e) =>
-                    setFormData({ ...formData, childAge: e.target.value })
+                    setFormData({ ...formData, age: Number(e.target.value) })
                   }
                   placeholder="Your child age"
                   className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
@@ -141,77 +157,86 @@ export default function SubmitPage() {
             </div>
 
             {/* Right column - Photo upload and submit */}
-            <div className="space-y-4 md:space-y-6 relative z-50 ">
-              <div className=" shadow-[-1px_-4px_18px_3px_rgba(0,_0,_0,_0.1)] p-5 rounded-2xl bg-white">
+            <div className="space-y-4 md:space-y-6 relative z-50">
+              <div className="shadow-[-1px_-4px_18px_3px_rgba(0,_0,_0,_0.1)] p-5 rounded-2xl bg-white">
                 <div>
                   <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
                     Upload Photo
                   </label>
-                  <div className="border-2 md:border-4 border-dashed border-gray-300 rounded-xl md:rounded-2xl p-6 md:p-12 text-center hover:border-primary transition-colors">
-                    {formData.photo ? (
-                      <div className="relative">
-                        <Image
-                          src={formData.photo || "/placeholder.svg"}
-                          width={300}
-                          height={300}
-                          alt="Preview"
-                          className="w-full h-48 md:h-64 object-cover rounded-lg md:rounded-xl mb-4"
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            setFormData({ ...formData, photo: null })
-                          }
-                          className="text-red-500 hover:text-red-700 font-semibold text-sm md:text-base"
-                        >
-                          Remove Photo
-                        </button>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="mb-4">
-                          <svg
-                            className="w-12 h-12 md:w-16 md:h-16 mx-auto text-gray-400"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                            />
-                          </svg>
-                        </div>
-                        <p className="text-gray-600 mb-4 text-sm md:text-base">
-                          Choose the files you want to upload from your Photo
-                        </p>
-                        <label className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl cursor-pointer transition-colors">
-                          <svg
-                            className="w-5 h-5 md:w-6 md:h-6"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 4v16m8-8H4"
-                            />
-                          </svg>
-                          <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handlePhotoUpload}
-                            className="hidden"
-                            required
+                  
+                  {/* Fixed: Entire drop zone is now clickable */}
+                  <label className="block cursor-pointer">
+                    <div className="border-2 md:border-4 border-dashed border-gray-300 rounded-xl md:rounded-2xl p-6 md:p-12 text-center hover:border-primary transition-colors">
+                      {formData.photos ? (
+                        <div className="relative">
+                          <Image
+                            src={preview || "/placeholder.svg"}
+                            width={300}
+                            height={300}
+                            alt="Preview"
+                            className="w-full h-48 md:h-64 object-cover rounded-lg md:rounded-xl mb-4"
                           />
-                        </label>
-                      </>
-                    )}
-                  </div>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setFormData({ ...formData, photos: null });
+                              setPreview(null);
+                            }}
+                            className="text-red-500 hover:text-red-700 font-semibold text-sm md:text-base"
+                          >
+                            Remove Photo
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="mb-4">
+                            <svg
+                              className="w-12 h-12 md:w-16 md:h-16 mx-auto text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              />
+                            </svg>
+                          </div>
+                          <p className="text-gray-600 mb-4 text-sm md:text-base">
+                            Choose the files you want to upload from your Photo
+                          </p>
+                          <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl transition-colors">
+                            <svg
+                              className="w-5 h-5 md:w-6 md:h-6"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 4v16m8-8H4"
+                              />
+                            </svg>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    
+                    {/* Hidden file input - now properly connected to the label */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handlePhotoUpload}
+                      className="sr-only"
+                      required
+                    />
+                  </label>
                 </div>
               </div>
 
@@ -236,12 +261,12 @@ export default function SubmitPage() {
 
               <button
                 type="submit"
-                disabled={!isFormValid || uploading}
+                disabled={!isFormValid || uploading || formMutation.isPending}
                 className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
               >
-                {uploading ? "Submitting..." : "Submit"}
+                {uploading || formMutation.isPending ? "Submitting..." : "Submit"}
               </button>
-              
+
               {/* Image positioned below the card */}
               <div
                 className="absolute -top-24 md:-top-26 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
@@ -249,7 +274,7 @@ export default function SubmitPage() {
               >
                 <Image
                   src="/formright.png"
-                  alt="ghjkl"
+                  alt="decoration"
                   width={100}
                   height={100}
                   className="object-contain w-full h-full"
