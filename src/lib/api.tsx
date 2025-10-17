@@ -1,5 +1,3 @@
-
-
 import axios from "axios";
 
 import { getSession } from "next-auth/react";
@@ -26,13 +24,11 @@ api.interceptors.request.use(
 export async function Submission() {
   try {
     const res = await api.get(`form-submissions`);
-    console.log("res", res);
     return res.data;
   } catch (error) {
     console.log(error);
   }
 }
-
 
 export async function formSubmission(data: FormData) {
   try {
@@ -40,7 +36,26 @@ export async function formSubmission(data: FormData) {
     return res.data;
   } catch (error) {
     console.error(" Upload failed:", error);
-    throw error; // important for React Query
+    throw error;
   }
 }
 
+export async function deleteSubmission(id: string) {
+  try {
+    const res = await api.delete(`form-submissions/${id}`);
+    return res.data;
+  } catch (error) {
+    console.error(" Upload failed:", error);
+    throw error;
+  }
+}
+
+export async function updateSubmission(id: string, data: FormData) {
+  try {
+    const res = await api.put(`form-submissions/${id}/status`, data);
+    return res.data;
+  } catch (error) {
+    console.error(" Upload failed:", error);
+    throw error;
+  }
+}

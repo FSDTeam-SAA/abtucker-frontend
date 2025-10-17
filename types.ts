@@ -1,25 +1,36 @@
 export interface Theme {
-  colors: string[]
-  logo: string | null
+  colors: string[];
+  logo: string | null;
 }
 
 export interface FormSubmission {
-  id: string
-  serial: number
-  childName: string
-  age: number
-  quote: string
-  status: "active" | "inactive"
-  photos: string
-  createdAt: string
+  _id: string;
+  serial: number;
+  childName: string;
+  age: number;
+  quote: string;
+  status: "active" | "deactivate";
+  photos: string | null | File;
+  createdAt: string;
+}
+
+export interface SubmissionType {
+  _id: string;
+  serial: number;
+  childName: string;
+  age: number;
+  quote: string;
+  status: "active" | "deactivate";
+  photos: File | null;
+  createdAt: string;
 }
 
 export interface User {
-  id: string
-  name: string
-  email: string
-  password: string
-  role: "admin" | "user"
+  id: string;
+  name: string;
+  email: string;
+  password: string;
+  role: "admin" | "user";
 }
 
-export type SubmissionStatus = "pending" | "approved" | "rejected"
+export type SubmissionStatus = "pending" | "approved" | "rejected";
