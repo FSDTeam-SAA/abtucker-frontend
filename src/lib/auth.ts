@@ -1,4 +1,7 @@
+
+
 import { User } from "../../types"
+
 
 export function getStoredUser(): User | null {
   if (typeof window === "undefined") return null

@@ -199,17 +199,12 @@ export default function SettingsPage() {
               </>
             ) : (
               <div className="text-center p-8">
-                <div className="bg-white p-4 rounded-xl shadow-lg transform -rotate-3 inline-block">
-                  <div className="text-center">
-                    <div className="text-red-500 font-bold text-2xl">LIVE</div>
-                    <div className="text-cyan-500 font-bold text-2xl">FROM</div>
-                    <div className="text-orange-500 font-bold text-2xl">
-                      SNACK
-                    </div>
-                    <div className="text-orange-500 font-bold text-2xl">
-                      TIME
-                    </div>
-                  </div>
+                <div className="bg-white p-4 rounded-xl  transform -rotate-3 inline-block">
+                  <div className="mt-[40px] flex justify-start">
+                          <div className="flex justify-center lg:justify-start">
+                            <Image src={`/logo2.svg`} alt="logo" width={800} height={800}  />
+                          </div>
+                        </div>
                 </div>
               </div>
             )}

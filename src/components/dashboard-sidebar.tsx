@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
+import Image from "next/image"
 
 export function DashboardSidebar() {
   const pathname = usePathname()
@@ -46,12 +47,11 @@ export function DashboardSidebar() {
       <aside className="w-64 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6">
           <div className="bg-white p-3 rounded-xl shadow-md transform -rotate-3 inline-block">
-            <div className="text-center">
-              <div className="text-red-500 font-bold text-sm">LIVE</div>
-              <div className="text-cyan-500 font-bold text-sm">FROM</div>
-              <div className="text-orange-500 font-bold text-sm">SNACK</div>
-              <div className="text-orange-500 font-bold text-sm">TIME</div>
-            </div>
+           <div className="mt-[40px] flex justify-start">
+                   <div className="flex justify-center lg:justify-start">
+                     <Image src={`/logo.png`} alt="logo" width={100} height={100} />
+                   </div>
+                 </div>
           </div>
         </div>
 

@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { FormSubmission } from "../../../types"
+import { useSession } from "next-auth/react"
 
 export default function DashboardPage() {
   const user = getStoredUser()
@@ -16,6 +17,8 @@ export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null)
   const itemsPerPage = 5
+  const {data:session}=useSession();
+  console.log(session)
 
   useEffect(() => {
     const stored = localStorage.getItem("submissions")
