@@ -13,7 +13,7 @@ const handler = NextAuth({
         console.log('🔐 Authorization attempt with credentials:', credentials?.email);
 
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/login`;
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}auth/login`;
           // console.log('🌐 Calling API endpoint:', apiUrl);
           
           const requestBody = JSON.stringify({
@@ -80,7 +80,7 @@ const handler = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/auth/signin",
+    signIn: "/auth/login",
     error: "/auth/signin",
   },
   session: {
