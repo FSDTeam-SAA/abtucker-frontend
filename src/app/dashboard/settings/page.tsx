@@ -67,7 +67,9 @@ export default function SettingsPage() {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <img
+            <Image
+              width={40}
+              height={40}
               src="/placeholder.svg?height=40&width=40"
               alt={user?.name || "User"}
               className="w-10 h-10 rounded-full"

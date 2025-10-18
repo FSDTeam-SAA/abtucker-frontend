@@ -13,7 +13,7 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
     if (status === "loading") return; // Wait for session to load
 
     // If user is not logged in or not admin, redirect to login
-    if (!session || session?.user?.role !== "admin") {
+    if (!session) {
       router.push("/login");
     } else {
       setIsChecking(false);
