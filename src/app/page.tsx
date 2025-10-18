@@ -104,7 +104,7 @@ export default function HomePage() {
           />
         </div>
 
-        <div className="relative z-10 px-[196px] mx-auto  py-8 md:py-12 lg:py-16 min-h-screen ">
+        <div className="relative z-10 md:px-[120px] lg:px-[196px] mx-auto  py-8 md:py-12 lg:py-16 min-h-screen ">
           <div className="flex flex-col  lg:flex-row   gap-8 md:gap-12 lg:gap-16 items-center w-full  mx-auto">
             {/* Left column */}
             <div className="w-full lg:w-[65%] ">
@@ -136,7 +136,7 @@ export default function HomePage() {
               <div className="flex justify-center lg:justify-start  max-w-[140px] max-h-[140px]">
                 <Image src={logo ||`/logo.png`} alt="log" width={150} height={150} />
               </div>
-              <div className="relative bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl max-w-md w-full">
+              <div className="relative bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl lg:max-w-md w-full">
                 <div className=" bg-white p-4 sm:p-6 md:p-8 rounded-xl md:rounded-2xl border-2 md:border-4 border-gray-200 mb-4 md:mb-6">
                   <QRCodeGenerator
                     url={

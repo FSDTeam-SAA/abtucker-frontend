@@ -108,7 +108,7 @@ export default function LoginPage() {
               {error && <p className="text-sm text-red-600">{error}</p>}
 
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center cursor-pointer space-x-2">
                   <Checkbox
                     id="remember"
                     checked={rememberMe}
