@@ -15,6 +15,7 @@ export default function SubmitPage() {
     age: 0,
     quote: "",
     photos: null as File | null,
+    serial:'123'
   });
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -50,6 +51,7 @@ export default function SubmitPage() {
       formDataToSent.append("childName", formData.childName);
       formDataToSent.append("age", String(formData.age));
       formDataToSent.append("quote", formData.quote);
+      formDataToSent.append('serial',formData.serial)
       if (formData.photos) {
         formDataToSent.append("photos", formData.photos);
       }
