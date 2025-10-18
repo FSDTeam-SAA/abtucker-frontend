@@ -3,4 +3,5 @@ export interface SubmissionForm {
   age: number;
   quote: string;
   photos: File | null;
+  serial:string;
 }

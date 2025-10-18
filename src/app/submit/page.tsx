@@ -7,7 +7,6 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
-import { log } from "console";
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -16,6 +15,7 @@ export default function SubmitPage() {
     age: 0,
     quote: "",
     photos: null as File | null,
+    serial:'123'
   });
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -51,6 +51,7 @@ export default function SubmitPage() {
       formDataToSent.append("childName", formData.childName);
       formDataToSent.append("age", String(formData.age));
       formDataToSent.append("quote", formData.quote);
+      formDataToSent.append('serial',formData.serial)
       if (formData.photos) {
         formDataToSent.append("photos", formData.photos);
       }
