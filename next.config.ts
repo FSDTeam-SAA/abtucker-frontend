@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
    images: {
     domains: [
       'hebbkx1anhila5yf.public.blob.vercel-storage.com',
-      // Add other domains you use for images
+      'res.cloudinary.com', // Cloudinary hostname
     ],
-    // Alternatively, you can use remotePatterns for more control (recommended)
+    // optional: use remotePatterns for more control
     remotePatterns: [
       {
         protocol: 'https',
@@ -15,7 +15,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Add other image hosts as needed
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
+      },
     ],
   },
 };
