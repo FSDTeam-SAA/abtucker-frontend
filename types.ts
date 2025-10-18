@@ -9,8 +9,8 @@ export interface FormSubmission {
   childName: string;
   age: number;
   quote: string;
-  status: "active" | "deactivate";
-  photos: string | null | File;
+  status: "active" | "deactivate" | "pending";
+  photos: string[] | null | File[];
   createdAt: string;
 }
 
@@ -20,8 +20,8 @@ export interface SubmissionType {
   childName: string;
   age: number;
   quote: string;
-  status: "active" | "deactivate";
-  photos: File | null;
+  status: "active" | "deactivate" | "pending";
+  photos: File[] | null;
   createdAt: string;
 }
 

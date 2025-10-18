@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutGrid, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { setStoredUser, getStoredUser } from "@/lib/auth";
+import { setStoredUser } from "@/lib/auth";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,6 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const user = getStoredUser();
 
   const handleLogout = () => {
     setStoredUser(null);

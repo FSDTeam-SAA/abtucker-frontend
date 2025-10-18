@@ -50,9 +50,9 @@ export async function deleteSubmission(id: string) {
   }
 }
 
-export async function updateSubmission(id: string, data: FormData) {
+export async function updateSubmission(id: string, status: string) {
   try {
-    const res = await api.put(`form-submissions/${id}/status`, data);
+    const res = await api.patch(`form-submissions/${id}/status`, { status });
     return res.data;
   } catch (error) {
     console.error(" Upload failed:", error);

@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { AuthGuard } from "@/components/auth-guard";
+// import { AuthGuard } from "@/components/auth-guard";
 import { ThemeProvider } from "@/lib/theme-context";
 import { DashboardSidebar } from "@/components/dashboard-sidebar";
 

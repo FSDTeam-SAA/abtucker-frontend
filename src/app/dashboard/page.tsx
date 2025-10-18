@@ -22,6 +22,7 @@ import { FormSubmission, SubmissionType } from "../../../types";
 import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
   const user = getStoredUser();
@@ -29,6 +30,7 @@ export default function DashboardPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
     useState<FormSubmission | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
   const itemsPerPage = 7;
   const queryClient = useQueryClient();
 
@@ -43,14 +45,20 @@ export default function DashboardPage() {
       status,
     }: {
       id: string;
-      status: "active" | "deactivate";
+      status: "active" | "deactivate" | "pending";
     }) => {
-      const formData = new FormData();
-      formData.append("status", status);
-      return updateSubmission(id, formData);
+      return updateSubmission(id, status);
     },
-    onSuccess: () => {
+    onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      toast.success(
+        variables.status === "active"
+          ? "Submission approved successfully."
+          : "Submission rejected successfully."
+      );
+    },
+    onError: () => {
+      toast.error("Something went wrong while updating submission.");
     },
   });
 
@@ -60,6 +68,10 @@ export default function DashboardPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      toast.success("Submission deleted successfully.");
+    },
+    onError: () => {
+      toast.error("Failed to delete submission.");
     },
   });
 
@@ -72,7 +84,14 @@ export default function DashboardPage() {
   };
 
   const handleDelete = (id: string) => {
-    deleteMutation.mutate(id);
+    setDeleteConfirm(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deleteMutation.mutate(deleteConfirm);
+      setDeleteConfirm(null);
+    }
   };
 
   const filteredSubmissions = allSubmissions?.filter(
@@ -182,7 +201,7 @@ export default function DashboardPage() {
                       <span className="px-3 py-2 rounded-sm text-sm font-medium bg-[#E6FAEE] text-green-700">
                         Approved
                       </span>
-                    ) : (
+                    ) : submission.status === "pending" ? (
                       <>
                         <button
                           onClick={() => handleApprove(submission._id)}
@@ -197,6 +216,10 @@ export default function DashboardPage() {
                           <X className="h-5 w-5" />
                         </button>
                       </>
+                    ) : (
+                      <span className="px-3 py-2 rounded-sm text-sm font-medium bg-[#FEECEE] text-red-600">
+                        Rejected
+                      </span>
                     )}
                     <button
                       onClick={() => setSelectedSubmission(submission)}
@@ -261,6 +284,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
+      {/* View Modal */}
       <Dialog
         open={!!selectedSubmission}
         onOpenChange={() => setSelectedSubmission(null)}
@@ -288,11 +312,11 @@ export default function DashboardPage() {
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Media</h3>
-                {selectedSubmission.photos && (
+                {selectedSubmission.photos?.length && (
                   <Image
                     width={500}
                     height={500}
-                    src={selectedSubmission.photos as string}
+                    src={selectedSubmission.photos[0] as string}
                     alt="Submission"
                     className="w-full rounded-lg max-h-96 object-cover"
                   />
@@ -301,6 +325,37 @@ export default function DashboardPage() {
             </div>
           )}
           <DialogFooter className="gap-2"></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={!!deleteConfirm}
+        onOpenChange={() => setDeleteConfirm(null)}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to delete?</DialogTitle>
+          </DialogHeader>
+          <p className="text-gray-600">
+            This action cannot be undone. The submission will be permanently
+            removed.
+          </p>
+          <DialogFooter className="mt-4 flex justify-center gap-2">
+            <Button
+              variant="outline"
+              onClick={() => setDeleteConfirm(null)}
+              className="cursor-pointer"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+              onClick={confirmDelete}
+            >
+              Delete
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
