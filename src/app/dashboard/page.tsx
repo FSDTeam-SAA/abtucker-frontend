@@ -1,62 +1,119 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { getStoredUser } from "@/lib/auth"
-
-import { Check, X, Eye, ChevronLeft, ChevronRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
-import { FormSubmission } from "../../../types"
-import { useSession } from "next-auth/react"
+import { useState } from "react";
+import { getStoredUser } from "@/lib/auth";
+import { Check, X, Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { FormSubmission, SubmissionType } from "../../../types";
+import Image from "next/image";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
+import { toast } from "sonner";
 
 export default function DashboardPage() {
-  const user = getStoredUser()
-  const [submissions, setSubmissions] = useState<FormSubmission[]>([])
-  const [filter, setFilter] = useState("all")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [selectedSubmission, setSelectedSubmission] = useState<FormSubmission | null>(null)
-  const itemsPerPage = 5
-  const {data:session}=useSession();
-  console.log(session)
+  const user = getStoredUser();
+  const [filter, setFilter] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedSubmission, setSelectedSubmission] =
+    useState<FormSubmission | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const itemsPerPage = 7;
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    const stored = localStorage.getItem("submissions")
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored)
-        setSubmissions(parsed)
-      } catch (e) {
-        console.error("[v0] Failed to parse submissions:", e)
-      }
-    }
-  }, [])
+  const { data: allSubmissions, isLoading } = useQuery({
+    queryKey: ["submissions"],
+    queryFn: Submission,
+  });
 
-  const filteredSubmissions = submissions.filter((sub) => {
-    if (filter === "all") return true
-    return sub.status === filter
-  })
+  const updateMutation = useMutation({
+    mutationFn: async ({
+      id,
+      status,
+    }: {
+      id: string;
+      status: "active" | "deactivate" | "pending";
+    }) => {
+      return updateSubmission(id, status);
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      toast.success(
+        variables.status === "active"
+          ? "Submission approved successfully."
+          : "Submission rejected successfully."
+      );
+    },
+    onError: () => {
+      toast.error("Something went wrong while updating submission.");
+    },
+  });
 
-  const totalPages = Math.ceil(filteredSubmissions.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const paginatedSubmissions = filteredSubmissions.slice(startIndex, startIndex + itemsPerPage)
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return deleteSubmission(id);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["submissions"] });
+      toast.success("Submission deleted successfully.");
+    },
+    onError: () => {
+      toast.error("Failed to delete submission.");
+    },
+  });
 
   const handleApprove = (id: string) => {
-    const updated = submissions.map((sub) => (sub.id === id ? { ...sub, status: "active" as const } : sub))
-    setSubmissions(updated)
-    localStorage.setItem("submissions", JSON.stringify(updated))
-  }
+    updateMutation.mutate({ id, status: "active" });
+  };
 
   const handleReject = (id: string) => {
-    const updated = submissions.map((sub) => (sub.id === id ? { ...sub, status: "inactive" as const } : sub))
-    setSubmissions(updated)
-    localStorage.setItem("submissions", JSON.stringify(updated))
-  }
+    updateMutation.mutate({ id, status: "deactivate" });
+  };
 
-  const handleApproveAll = () => {
-    const updated = submissions.map((sub) => ({ ...sub, status: "active" as const }))
-    setSubmissions(updated)
-    localStorage.setItem("submissions", JSON.stringify(updated))
+  const handleDelete = (id: string) => {
+    setDeleteConfirm(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteConfirm) {
+      deleteMutation.mutate(deleteConfirm);
+      setDeleteConfirm(null);
+    }
+  };
+
+  const filteredSubmissions = allSubmissions?.filter(
+    (sub: { status: string }) => {
+      if (filter === "all") return true;
+      return sub.status === filter;
+    }
+  );
+
+  const totalPages = Math.ceil(filteredSubmissions?.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedSubmissions = filteredSubmissions?.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  if (isLoading) {
+    return (
+      <div className="p-8 text-center text-gray-600">
+        Loading submissions...
+      </div>
+    );
   }
 
   return (
@@ -64,18 +121,29 @@ export default function DashboardPage() {
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div>
-            <h1 className="text-3xl font-bold text-primary">Answer&apos;s Submissions</h1>
-            <p className="text-gray-600">Welcome back! Here&apos;s what&apos;s happening with your app today.</p>
+            <h1 className="text-3xl font-bold text-primary">
+              Answer&apos;s Submissions
+            </h1>
+            <p className="text-gray-600">
+              Welcome back! Here&apos;s what&apos;s happening with your app
+              today.
+            </p>
           </div>
           <div className="flex items-center gap-3">
-            <img
+            <Image
+              width={40}
+              height={40}
               src="/placeholder.svg?height=40&width=40"
               alt={user?.name || "User"}
               className="w-10 h-10 rounded-full"
             />
             <div>
-              <div className="font-semibold text-gray-900">{user?.name || "Olivia Rhye"}</div>
-              <div className="text-sm text-gray-600">{user?.email || "olivia@untitledui.com"}</div>
+              <div className="font-semibold text-gray-900">
+                {user?.name || "Olivia Rhye"}
+              </div>
+              <div className="text-sm text-gray-600">
+                {user?.email || "olivia@untitledui.com"}
+              </div>
             </div>
           </div>
         </div>
@@ -90,12 +158,17 @@ export default function DashboardPage() {
             <SelectContent>
               <SelectItem value="all">All</SelectItem>
               <SelectItem value="active">Approved</SelectItem>
-              <SelectItem value="inactive">Rejected</SelectItem>
+              <SelectItem value="deactivate">Rejected</SelectItem>
             </SelectContent>
           </Select>
 
-          <Button onClick={handleApproveAll} className="bg-primary hover:bg-primary-hover text-white">
-            Approve All ({filteredSubmissions.length})
+          <Button
+            onClick={() =>
+              alert("Bulk Approve removed — now handled individually by API.")
+            }
+            className="bg-primary hover:bg-primary-hover text-white"
+          >
+            Approve All ({filteredSubmissions?.length})
           </Button>
         </div>
 
@@ -103,51 +176,63 @@ export default function DashboardPage() {
           <table className="w-full">
             <thead className="bg-purple-50">
               <tr>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">Serial</th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">User&apos;s Answer</th>
-                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">Action</th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  Serial
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  User&apos;s Answer
+                </th>
+                <th className="px-6 py-4 text-right text-sm font-semibold text-gray-900">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {paginatedSubmissions.map((submission) => (
-                <tr key={submission.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">#{submission.serial}</td>
+              {paginatedSubmissions?.map((submission: SubmissionType) => (
+                <tr key={submission._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 text-sm text-gray-900">
+                    #{submission.serial}
+                  </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="line-clamp-2">{submission.quote}</div>
                   </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      {submission.status === "active" ? (
-                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-700">
-                          Approved
-                        </span>
-                      ) : submission.status === "inactive" ? (
-                        <span className="px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-700">
-                          Rejected
-                        </span>
-                      ) : (
-                        <>
-                          <button
-                            onClick={() => handleApprove(submission.id)}
-                            className="p-2 rounded-lg bg-green-100 text-green-600 hover:bg-green-200"
-                          >
-                            <Check className="h-5 w-5" />
-                          </button>
-                          <button
-                            onClick={() => handleReject(submission.id)}
-                            className="p-2 rounded-lg bg-red-100 text-red-600 hover:bg-red-200"
-                          >
-                            <X className="h-5 w-5" />
-                          </button>
-                        </>
-                      )}
-                      <button
-                        onClick={() => setSelectedSubmission(submission)}
-                        className="p-2 rounded-lg bg-primary/10 text-primary hover:bg-primary/20"
-                      >
-                        <Eye className="h-5 w-5" />
-                      </button>
-                    </div>
+                  <td className="px-6 py-4 flex items-center justify-end gap-2">
+                    {submission.status === "active" ? (
+                      <span className="px-3 py-2 rounded-sm text-sm font-medium bg-[#E6FAEE] text-green-700">
+                        Approved
+                      </span>
+                    ) : submission.status === "pending" ? (
+                      <>
+                        <button
+                          onClick={() => handleApprove(submission._id)}
+                          className="p-2 rounded-sm bg-[#E6FAEE] text-[#1F9854] hover:bg-green-200 cursor-pointer"
+                        >
+                          <Check className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleReject(submission._id)}
+                          className="p-2 rounded-sm bg-[#FEECEE] text-red-600 hover:bg-red-200 cursor-pointer"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      </>
+                    ) : (
+                      <span className="px-3 py-2 rounded-sm text-sm font-medium bg-[#FEECEE] text-red-600">
+                        Rejected
+                      </span>
+                    )}
+                    <button
+                      onClick={() => setSelectedSubmission(submission)}
+                      className="p-2 rounded-lg bg-[#EBDFFA] text-[#9B5DE5] hover:bg-[#d5bcf5] cursor-pointer"
+                    >
+                      <Eye className="h-5 w-5" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(submission._id)}
+                      className="p-2 rounded-lg bg-[#FFF5E5] text-[#E67E22] hover:bg-[#FFE1B3] cursor-pointer"
+                    >
+                      <Trash2 className="h-5 w-5" />
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -157,8 +242,9 @@ export default function DashboardPage() {
 
         <div className="p-6 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-600">
-            Showing {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredSubmissions.length)} of{" "}
-            {filteredSubmissions.length} results
+            Showing {startIndex + 1} to{" "}
+            {Math.min(startIndex + itemsPerPage, filteredSubmissions?.length)}{" "}
+            of {filteredSubmissions?.length} results
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -166,6 +252,7 @@ export default function DashboardPage() {
               size="sm"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
+              className="cursor-pointer"
             >
               <ChevronLeft className="h-4 w-4" />
             </Button>
@@ -175,7 +262,11 @@ export default function DashboardPage() {
                 variant={page === currentPage ? "default" : "outline"}
                 size="sm"
                 onClick={() => setCurrentPage(page)}
-                className={page === currentPage ? "bg-primary hover:bg-primary-hover" : ""}
+                className={
+                  page === currentPage
+                    ? "bg-primary hover:bg-primary-hover cursor-pointer"
+                    : "cursor-pointer"
+                }
               >
                 {page}
               </Button>
@@ -185,6 +276,7 @@ export default function DashboardPage() {
               size="sm"
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
+              className="cursor-pointer"
             >
               <ChevronRight className="h-4 w-4" />
             </Button>
@@ -192,7 +284,11 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <Dialog open={!!selectedSubmission} onOpenChange={() => setSelectedSubmission(null)}>
+      {/* View Modal */}
+      <Dialog
+        open={!!selectedSubmission}
+        onOpenChange={() => setSelectedSubmission(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Serial: #{selectedSubmission?.serial}</DialogTitle>
@@ -200,20 +296,27 @@ export default function DashboardPage() {
           {selectedSubmission && (
             <div className="space-y-4">
               <div>
-                <h3 className="font-semibold mb-2">1. Child&apos;s name and age?</h3>
+                <h3 className="font-semibold mb-2">
+                  1. Child&apos;s name and age?
+                </h3>
                 <p className="text-gray-700">
-                  {selectedSubmission.childName}, {selectedSubmission.age} years old
+                  {selectedSubmission.childName}, {selectedSubmission.age} years
+                  old
                 </p>
               </div>
               <div>
-                <h3 className="font-semibold mb-2">2. What did your child say?</h3>
+                <h3 className="font-semibold mb-2">
+                  2. What did your child say?
+                </h3>
                 <p className="text-gray-700">{selectedSubmission.quote}</p>
               </div>
               <div>
                 <h3 className="font-semibold mb-2">Media</h3>
-                {selectedSubmission.photos && (
-                  <img
-                    src={selectedSubmission.photos || "/placeholder.svg"}
+                {selectedSubmission.photos?.length && (
+                  <Image
+                    width={500}
+                    height={500}
+                    src={selectedSubmission.photos[0] as string}
                     alt="Submission"
                     className="w-full rounded-lg max-h-96 object-cover"
                   />
@@ -221,31 +324,40 @@ export default function DashboardPage() {
               </div>
             </div>
           )}
-          <DialogFooter className="gap-2">
+          <DialogFooter className="gap-2"></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Modal */}
+      <Dialog
+        open={!!deleteConfirm}
+        onOpenChange={() => setDeleteConfirm(null)}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Are you sure you want to delete?</DialogTitle>
+          </DialogHeader>
+          <p className="text-gray-600">
+            This action cannot be undone. The submission will be permanently
+            removed.
+          </p>
+          <DialogFooter className="mt-4 flex justify-center gap-2">
             <Button
               variant="outline"
-              className="border-red-600 text-red-600 hover:bg-red-50 bg-transparent"
-              onClick={() => {
-                if (selectedSubmission) handleReject(selectedSubmission.id)
-                setSelectedSubmission(null)
-              }}
+              onClick={() => setDeleteConfirm(null)}
+              className="cursor-pointer"
             >
-              <X className="h-4 w-4 mr-2" />
-              Reject
+              Cancel
             </Button>
             <Button
-              className="bg-green-600 hover:bg-green-700 text-white"
-              onClick={() => {
-                if (selectedSubmission) handleApprove(selectedSubmission.id)
-                setSelectedSubmission(null)
-              }}
+              className="bg-red-600 hover:bg-red-700 text-white cursor-pointer"
+              onClick={confirmDelete}
             >
-              <Check className="h-4 w-4 mr-2" />
-              Approve
+              Delete
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
-  )
+  );
 }

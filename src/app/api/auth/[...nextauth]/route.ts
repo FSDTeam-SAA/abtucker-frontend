@@ -10,54 +10,57 @@ const handler = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log('🔐 Authorization attempt with credentials:', credentials?.email);
+        console.log(
+          "🔐 Authorization attempt with credentials:",
+          credentials?.email
+        );
 
         try {
           const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}auth/login`;
-          // console.log('🌐 Calling API endpoint:', apiUrl);
-          
+          console.log('🌐 Calling API endpoint:', apiUrl);
+
           const requestBody = JSON.stringify({
             email: credentials?.email,
             password: credentials?.password,
           });
-          
-          console.log('📤 Request body:', requestBody);
+
+          console.log("📤 Request body:", requestBody);
 
           const res = await fetch(apiUrl, {
             method: "POST",
-            headers: { 
+            headers: {
               "Content-Type": "application/json",
-              "Accept": "application/json",
+              Accept: "application/json",
             },
             body: requestBody,
           });
 
           // console.log('📥 Response status:', res.status);
           // console.log('📥 Response ok:', res.ok);
-          
+
           const responseText = await res.text();
           // console.log('📥 Raw response:', responseText);
-          
+
           let data;
           try {
             data = JSON.parse(responseText);
             // console.log('📊 Parsed response data:', data);
           } catch {
-            console.error('❌ Failed to parse JSON response');
+            console.error("❌ Failed to parse JSON response");
             return null;
           }
 
           // Check if the response indicates success
           if (!res.ok || !data.success) {
-            console.error('❌ API returned error:', data?.message);
+            console.error("❌ API returned error:", data?.message);
             return null;
           }
 
           // Your backend returns user data directly in data.data
           const userData = data.data;
-          
+
           if (!userData) {
-            console.error('❌ No user data in response');
+            console.error("❌ No user data in response");
             return null;
           }
 
@@ -99,13 +102,13 @@ const handler = NextAuth({
       return token;
     },
     async session({ session, token }) {
-      console.log('💼 Session callback - token:', token);
+      console.log("💼 Session callback - token:", token);
       if (token) {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
         session.user.accessToken = token.accessToken as string;
       }
-      console.log('💼 Session callback - session:', session);
+      console.log("💼 Session callback - session:", session);
       return session;
     },
   },
