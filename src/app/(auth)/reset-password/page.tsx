@@ -21,7 +21,7 @@ export default function ResetPasswordPage() {
     mutationFn:(email:string)=>resetPassword(email),
     onSuccess:(data)=>{
       toast.success(`wow nice ${data}`)
-          router.push(`/verify?email:${email}`);
+          router.push(`/verify?email=${email}`);
 
     },
     onError:(error)=>{

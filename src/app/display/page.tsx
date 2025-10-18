@@ -181,7 +181,7 @@ export default function DisplayPage() {
         {/* 🔹 Section 2: Static 3-Item Grid */}
         <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-20">
           {displayMoments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-[1700px] px-6 pb-20">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
               {displayMoments.map((moment, index) => (
                 <div
                   key={`${moment.id}-${index}`}
