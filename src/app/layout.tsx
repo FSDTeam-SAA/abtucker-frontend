@@ -3,6 +3,7 @@ import { Coiny, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/tanstackProvider";
 import SessionWrapper from "@/provider/session-wrapper";
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,16 @@ export default function RootLayout({
       >
         <SessionWrapper>
           <TanstackProvider>{children}</TanstackProvider>
+          <Toaster
+            position="top-center"
+            offset={16}
+            gap={12}
+            visibleToasts={3}
+            duration={5000}
+            richColors
+            closeButton
+            expand={false}
+          />
         </SessionWrapper>
       </body>
     </html>

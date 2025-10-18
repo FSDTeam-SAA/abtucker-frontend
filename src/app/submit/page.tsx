@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
+import { useThem } from "@/hooks";
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -15,21 +16,23 @@ export default function SubmitPage() {
     age: 0,
     quote: "",
     photos: null as File | null,
-    serial:'123'
+    serial: "123",
   });
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const { data } = useThem();
+  const logo = data?.data?.logo;
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
     mutationFn: (data: FormData) => formSubmission(data),
-    onSuccess:()=>{
-     router.push("/thank-you");
+    onSuccess: () => {
+      router.push("/thank-you");
     },
-    onError:()=>{
-      console.log('error')
-    }
+    onError: () => {
+      console.log("error");
+    },
   });
 
   const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,14 +54,13 @@ export default function SubmitPage() {
       formDataToSent.append("childName", formData.childName);
       formDataToSent.append("age", String(formData.age));
       formDataToSent.append("quote", formData.quote);
-      formDataToSent.append('serial',formData.serial)
+      formDataToSent.append("serial", formData.serial);
       if (formData.photos) {
         formDataToSent.append("photos", formData.photos);
       }
       await formMutation.mutateAsync(formDataToSent);
       // Store in localStorage if needed
       // localStorage.setItem("submission", JSON.stringify(formData));
- 
     } catch (error) {
       console.error("Submission failed", error);
       // Optionally show an error message to the user
@@ -89,8 +91,13 @@ export default function SubmitPage() {
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 lg:py-16 min-h-screen flex flex-col items-center justify-center">
         <div className="mb-6 md:mb-8">
-          <div className="flex justify-center lg:justify-start">
-            <Image src={`/logo.png`} alt="logo" width={100} height={100} />
+          <div className="flex justify-center lg:justify-start w-[140px] h-[140px]">
+            <Image
+              src={logo || `/logo.png`}
+              alt="logo"
+              width={140}
+              height={140}
+            />
           </div>
         </div>
 
@@ -164,7 +171,7 @@ export default function SubmitPage() {
                   <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
                     Upload Photo
                   </label>
-                  
+
                   {/* Fixed: Entire drop zone is now clickable */}
                   <label className="block cursor-pointer">
                     <div className="border-2 md:border-4 border-dashed border-gray-300 rounded-xl md:rounded-2xl p-6 md:p-12 text-center hover:border-primary transition-colors">
@@ -228,7 +235,7 @@ export default function SubmitPage() {
                         </>
                       )}
                     </div>
-                    
+
                     {/* Hidden file input - now properly connected to the label */}
                     <input
                       type="file"
@@ -263,9 +270,11 @@ export default function SubmitPage() {
               <button
                 type="submit"
                 disabled={!isFormValid || uploading || formMutation.isPending}
-                className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
+                className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover cursor-pointer disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
               >
-                {uploading || formMutation.isPending ? "Submitting..." : "Submit"}
+                {uploading || formMutation.isPending
+                  ? "Submitting..."
+                  : "Submit"}
               </button>
 
               {/* Image positioned below the card */}

@@ -1,10 +1,16 @@
+'use client'
 import Link from "next/link";
 import Image from "next/image";
 import { QRCodeGenerator } from "@/components/qr-code";
+import { useThem } from "@/hooks";
 
 export default function HomePage() {
+  const {data,}=useThem()
+
+  const logo= data?.data?.logo;
+
   return (
-    <div className=" animated-gradient relative overflow-hidden max-h-screen bg-cover bg-center">
+    <div className=" animated-gradient relative overflow-hidden lg:h-screen bg-cover bg-center">
       <div
         className="relative bg-cover bg-center min-h-screen"
         style={{
@@ -99,9 +105,9 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 px-[196px] mx-auto  py-8 md:py-12 lg:py-16 min-h-screen ">
-          <div className="flex flex-col  md:flex-row  gap-8 md:gap-12 lg:gap-16 items-center w-full  mx-auto">
+          <div className="flex flex-col  lg:flex-row   gap-8 md:gap-12 lg:gap-16 items-center w-full  mx-auto">
             {/* Left column */}
-            <div className="w-full md:w-[65%]">
+            <div className="w-full lg:w-[65%] ">
               <div className="mx-auto">
                 <h1 className="text-[35px] lg:text-[55px]  font-normal  text-[#343A40] mb-4 md:mb-6 font-coiny leading-[150%]">
                   Share Your Favorite Moment!
@@ -112,7 +118,7 @@ export default function HomePage() {
                 </p>
               </div>
 
-              <div className="">
+              <div className="flex justify-center">
                 <div className=" max-w-[756px] max-h-[760px] object-cover">
                   <Image
                     src="/displayleft.png"
@@ -120,14 +126,15 @@ export default function HomePage() {
                     width={1000}
                     height={1000}
                     className=" w-full h-full"
+                    
                   />
                 </div>
               </div>
             </div>
 
-            <div className="w-full md:w-[35%] flex flex-col justify-center items-center">
-              <div className="flex justify-center lg:justify-start">
-                <Image src={`/logo.png`} alt="log" width={100} height={100} />
+            <div className="w-full lg:w-[35%] flex flex-col gap-5 justify-center items-center">
+              <div className="flex justify-center lg:justify-start  max-w-[140px] max-h-[140px]">
+                <Image src={logo ||`/logo.png`} alt="log" width={150} height={150} />
               </div>
               <div className="relative bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl max-w-md w-full">
                 <div className=" bg-white p-4 sm:p-6 md:p-8 rounded-xl md:rounded-2xl border-2 md:border-4 border-gray-200 mb-4 md:mb-6">

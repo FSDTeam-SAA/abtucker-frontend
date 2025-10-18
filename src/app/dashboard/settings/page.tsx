@@ -1,13 +1,17 @@
 "use client";
 
 import type React from "react";
-
 import { useState } from "react";
 import { useTheme } from "@/lib/theme-context";
 import { Button } from "@/components/ui/button";
 import { Check, Upload, Edit2, Trash2 } from "lucide-react";
 import { getStoredUser } from "@/lib/auth";
 import Image from "next/image";
+import { useThem } from "@/hooks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { themChange } from "@/lib/api";
+import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 const COLOR_PRESETS = [
   { id: "purple", colors: ["#a855f7", "#d8b4fe"], label: "Purple" },
@@ -15,21 +19,59 @@ const COLOR_PRESETS = [
   { id: "cyan", colors: ["#06b6d4", "#a5f3fc"], label: "Cyan" },
 ];
 
+// API function - make sure this matches your actual API
+
 export default function SettingsPage() {
   const user = getStoredUser();
+  const {data:session}=useSession()
   const { theme, updateTheme } = useTheme();
   const [selectedColors, setSelectedColors] = useState(theme.colors);
   const [logoPreview, setLogoPreview] = useState(theme.logo);
   const [hasChanges, setHasChanges] = useState(false);
+  const [agreed,] = useState(true); // Added missing state
+  const { data, isLoading, error } = useThem();
+  const queryClient=useQueryClient()
+  const [formData, setFormData] = useState({
+    colors: [] as string[], // Changed to array to match API
+    logo: null as File | null,
+  });
+console.log('color change',data)
+  const logo = data?.data?.logo;
+ console.log('session',session?.user)
+  // Corrected mutation setup
+  const themMutation = useMutation({
+    mutationFn:(data:FormData) =>themChange(data), 
+    mutationKey: ["them"], 
+    onSuccess: (data) => {
+     
+
+      toast.success(data.message)
+queryClient.invalidateQueries({queryKey:['them']})
+      if (data.success) {
+        updateTheme({ 
+          colors: selectedColors, 
+          logo: logoPreview 
+        });
+        setHasChanges(false);
+      }
+
+    },
+    onError: (error) => {
+      console.error('Failed to update theme:', error);
+    }
+  });
 
   const handleColorSelect = (colors: string[]) => {
     setSelectedColors(colors);
+    setFormData(prev => ({ ...prev, colors }));
     setHasChanges(true);
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+    
     if (file) {
+      setFormData(prev => ({ ...prev, logo: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogoPreview(reader.result as string);
@@ -39,21 +81,52 @@ export default function SettingsPage() {
     }
   };
 
-  const handleSave = () => {
-    updateTheme({ colors: selectedColors, logo: logoPreview });
-    setHasChanges(false);
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!agreed) return;
+    
+    try {
+      const formDataToSend = new FormData();
+      
+      // Append colors as array (multiple entries with same key)
+      selectedColors.forEach(color => {
+        formDataToSend.append('color', color);
+      });
+      
+      // Append logo if exists
+      if (formData.logo) {
+        formDataToSend.append('logo', formData.logo);
+      }
+      
+      await themMutation.mutateAsync(formDataToSend);
+    } catch (error) {
+      console.error('Save error:', error);
+    }
   };
 
   const handleCancel = () => {
     setSelectedColors(theme.colors);
     setLogoPreview(theme.logo);
+    setFormData({
+      colors: theme.colors,
+      logo: null
+    });
     setHasChanges(false);
   };
 
   const handleDeleteLogo = () => {
     setLogoPreview(null);
+    setFormData(prev => ({ ...prev, logo: null }));
     setHasChanges(true);
   };
+
+  if (isLoading) {
+    return <div className="p-8">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8">Error loading theme data</div>;
+  }
 
   return (
     <div className="p-8">
@@ -62,24 +135,23 @@ export default function SettingsPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
             <p className="text-gray-600">
-              Welcome back! Here&apos;s what&apos;s happening with your app
-              today.
+              Welcome back! Here&apos;s what&apos;s happening with your app today.
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Image
               width={40}
               height={40}
-              src="/placeholder.svg?height=40&width=40"
+              src={`/user.jpg`}
               alt={user?.name || "User"}
               className="w-10 h-10 rounded-full"
             />
             <div>
               <div className="font-semibold text-gray-900">
-                {user?.name || "Olivia Rhye"}
+                {session?.user.name || "Olivia Rhye"}
               </div>
               <div className="text-sm text-gray-600">
-                {user?.email || "olivia@untitledui.com"}
+                {session?.user?.email || "olivia@untitledui.com"}
               </div>
             </div>
           </div>
@@ -96,6 +168,7 @@ export default function SettingsPage() {
               {COLOR_PRESETS.map((preset) => (
                 <button
                   key={preset.id}
+                  type="button"
                   onClick={() => handleColorSelect(preset.colors)}
                   className="relative p-4 border-2 rounded-lg hover:border-gray-400 transition-colors"
                   style={{
@@ -142,7 +215,7 @@ export default function SettingsPage() {
               <label htmlFor="logo-upload" className="cursor-pointer">
                 <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-600 mb-2">
-                  Browse and chose the files you want to upload from your Photo
+                  Browse and choose the files you want to upload from your Photo
                 </p>
                 <button
                   type="button"
@@ -158,17 +231,17 @@ export default function SettingsPage() {
             <Button
               variant="outline"
               onClick={handleCancel}
-              disabled={!hasChanges}
+              disabled={!hasChanges || themMutation.isPending}
               className="flex-1 bg-transparent"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
-              disabled={!hasChanges}
+              disabled={!hasChanges || themMutation.isPending}
               className="flex-1 bg-primary hover:bg-primary-hover"
             >
-              Save Changes
+              {themMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
           </div>
         </div>
@@ -188,10 +261,14 @@ export default function SettingsPage() {
                   height={200}
                 />
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <button className="p-2 rounded-lg bg-primary text-white hover:bg-primary-hover">
+                  <button 
+                    type="button"
+                    className="p-2 rounded-lg bg-primary text-white hover:bg-primary-hover"
+                  >
                     <Edit2 className="h-5 w-5" />
                   </button>
                   <button
+                    type="button"
                     onClick={handleDeleteLogo}
                     className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
                   >
@@ -201,12 +278,18 @@ export default function SettingsPage() {
               </>
             ) : (
               <div className="text-center p-8">
-                <div className="bg-white p-4 rounded-xl  transform -rotate-3 inline-block">
+                <div className="bg-white p-4 rounded-xl transform -rotate-3 inline-block">
                   <div className="mt-[40px] flex justify-start">
-                          <div className="flex justify-center lg:justify-start">
-                            <Image src={`/logo2.svg`} alt="logo" width={800} height={800}  />
-                          </div>
-                        </div>
+                    <div className="flex justify-center lg:justify-start">
+                      <Image
+                        src={logo || `/logo2.svg`}
+                        alt="logo"
+                        width={800}
+                        height={800}
+                        className="max-w-full h-auto"
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
             )}

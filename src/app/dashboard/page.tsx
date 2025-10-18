@@ -23,9 +23,12 @@ import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
 import { toast } from "sonner";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
   const user = getStoredUser();
+    const {data:session}=useSession()
+  
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
@@ -133,16 +136,16 @@ export default function DashboardPage() {
             <Image
               width={40}
               height={40}
-              src="/placeholder.svg?height=40&width=40"
+              src={`/user.jpg`}
               alt={user?.name || "User"}
               className="w-10 h-10 rounded-full"
             />
             <div>
               <div className="font-semibold text-gray-900">
-                {user?.name || "Olivia Rhye"}
+                {session?.user?.name || "Olivia Rhye"}
               </div>
               <div className="text-sm text-gray-600">
-                {user?.email || "olivia@untitledui.com"}
+                {session?.user?.email || "olivia@untitledui.com"}
               </div>
             </div>
           </div>

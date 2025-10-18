@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff } from "lucide-react";
 import Image from "next/image";
+import { useThem } from "@/hooks";
+
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,6 +21,8 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const {data}=useThem()
+  const logo= data?.data?.logo;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +34,7 @@ export default function LoginPage() {
       email,
       password,
     });
-    console.log("🔄 SignIn response:", res);
+  
 
     if (res?.error) {
       setError("Invalid credentials. Please try again.");
@@ -47,7 +51,7 @@ export default function LoginPage() {
     <div className="container mx-auto">
       <div className="mt-[40px] flex justify-start">
         <div className="flex justify-center lg:justify-start">
-          <Image src={`/logo.png`} alt="logo" width={100} height={100} />
+          <Image src={logo ||`/logo.png`} alt="logo" width={100} height={100} />
         </div>
       </div>
       <div className="min-h-[80vh] flex items-center justify-center p-4">
@@ -90,12 +94,12 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-gray-500 hover:text-gray-700"
                   >
                     {showPassword ? (
-                      <EyeOff className="h-5 w-5" />
+                      <EyeOff className="h-5 w-5 cursor-pointer" />
                     ) : (
-                      <Eye className="h-5 w-5" />
+                      <Eye className="h-5 w-5 cursor-pointer" />
                     )}
                   </button>
                 </div>
@@ -119,7 +123,7 @@ export default function LoginPage() {
                 </div>
                 <Link
                   href="/reset-password"
-                  className="text-sm text-[#9B5DE5] hover:text-primary-hover"
+                  className="text-sm text-[#9B5DE5] cursor-pointer hover:text-primary-hover"
                 >
                   Forgot password?
                 </Link>
@@ -127,7 +131,7 @@ export default function LoginPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-[#9B5DE5] hover:bg-primary-hover text-white"
+                className="w-full bg-[#9B5DE5]  cursor-pointer hover:bg-primary-hover text-white"
               >
                 {loading ? "Loading..." : "Sign In"}
               </Button>
