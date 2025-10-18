@@ -17,12 +17,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import Image from "next/image";
+import { useThem } from "@/hooks";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-
+  const { data } = useThem();
+  const logo = data?.data?.logo;
   const handleLogout = () => {
     setStoredUser(null);
     router.push("/login");
@@ -45,13 +47,18 @@ export function DashboardSidebar() {
     <>
       <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6">
-          <div className="bg-white p-3 rounded-xl shadow-md transform -rotate-3 inline-block">
-            <div className="mt-[40px] flex justify-start">
-              <div className="flex justify-center lg:justify-start">
-                <Image src={`/logo.png`} alt="logo" width={100} height={100} />
+        
+            <div className="mt-[40px] flex justify-center">
+              <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
+                <Image
+                  src={logo || `/logo.png`}
+                  alt="logo"
+                  width={80}
+                  height={80}
+                />
               </div>
             </div>
-          </div>
+          
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
