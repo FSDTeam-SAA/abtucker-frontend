@@ -18,7 +18,8 @@ export default function VerifyPage() {
   const [timer, setTimer] = useState(30);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const { data, isLoading, error } = useThem();
-  const email = searchParams.get("email");
+  const email = searchParams.get("email") ?? "";
+  console.log("hello", email);
 
   const logo = data?.data?.logo;
 
@@ -38,7 +39,7 @@ export default function VerifyPage() {
     mutationFn: (email: string) => resetPassword(email),
     onSuccess: () => {
       toast.success(`Verification code sent to ${email}`);
-      setTimer(30);
+      
     },
     onError: (error: Error) => {
       toast.error(`Failed to send code: ${error.message}`);
@@ -46,20 +47,48 @@ export default function VerifyPage() {
   });
 
   // Verify code mutation
-  const verifyCodeMutation = useMutation({
-    mutationFn: ({ email, otp }: { email: string; otp: string }) =>
-      verifyOTP({ email, otp }),
-    onSuccess: () => {
+//   const verifyCodeMutation = useMutation({
+//     mutationFn: ({ email, otp }: { email: string; otp: string }) =>
+//       verifyOTP({ email, otp }),
+//     onSuccess: (data) => {
+
+//         const token=data?.data?.resetToken;
+//         console.log(data?.data?.resetToken,'respons')
+//       toast.success("Verification successful!");
+//       router.push(`/create-password?token=${token}`);
+//     },
+//     onError: (error: Error) => {
+//       toast.error(`Verification failed: ${error.message}`);
+//       // Clear code on error for better UX
+//       setCode(["", "", "", "", "", ""]);
+//       inputRefs.current[0]?.focus();
+//     },
+//   });
+
+const verifyCodeMutation = useMutation({
+  mutationFn: ({ email, otp }: { email: string; otp: string }) =>
+    verifyOTP({ email, otp }),
+
+  onSuccess: (response) => {
+    // Check the correct structure of your API response
+    const token = response?.data?.data?.resetToken;
+
+    if (token) {
+      console.log("Reset Token:", token);
       toast.success("Verification successful!");
-      router.push(`/create-password?email=${encodeURIComponent(email || "")}`);
-    },
-    onError: (error: Error) => {
-      toast.error(`Verification failed: ${error.message}`);
-      // Clear code on error for better UX
-      setCode(["", "", "", "", "", ""]);
-      inputRefs.current[0]?.focus();
-    },
-  });
+      router.push(`/create-password?token=${token}`);
+    } else {
+      console.error("Reset token not found in response:", response);
+      toast.error("Something went wrong. Please try again.");
+    }
+  },
+
+  onError: (error) => {
+    console.error("Verification failed:", error);
+    toast.error("Invalid OTP or server error.");
+  },
+});
+
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return;
@@ -79,7 +108,8 @@ export default function VerifyPage() {
       const nextEmptyIndex = newCode.findIndex(
         (digit, i) => i >= index && digit === ""
       );
-      const focusIndex = nextEmptyIndex === -1 ? 5 : Math.min(nextEmptyIndex, 5);
+      const focusIndex =
+        nextEmptyIndex === -1 ? 5 : Math.min(nextEmptyIndex, 5);
       inputRefs.current[focusIndex]?.focus();
     } else {
       // Single digit input
@@ -91,7 +121,7 @@ export default function VerifyPage() {
       if (value && index < 5) {
         inputRefs.current[index + 1]?.focus();
       }
-      
+
       // Auto-submit when all digits are filled
       if (value && index === 5) {
         const fullCode = newCode.join("");
@@ -145,7 +175,7 @@ export default function VerifyPage() {
 
     if (verificationCode.length !== 6) {
       toast.error("Please enter all 6 digits");
-      inputRefs.current[code.findIndex(digit => digit === "")]?.focus();
+      inputRefs.current[code.findIndex((digit) => digit === "")]?.focus();
       return;
     }
 
@@ -190,8 +220,6 @@ export default function VerifyPage() {
   }
 
   return (
-
-    
     <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
@@ -274,7 +302,7 @@ export default function VerifyPage() {
               type="submit"
               className="w-full bg-primary hover:bg-primary/90 text-white font-medium py-2.5"
               disabled={
-                verifyCodeMutation.isPending || 
+                verifyCodeMutation.isPending ||
                 code.join("").length !== 6 ||
                 !email
               }
@@ -292,6 +320,5 @@ export default function VerifyPage() {
         </div>
       </div>
     </div>
-  
   );
 }

@@ -25,7 +25,7 @@ api.interceptors.request.use(
 
 export async function resetPassword(email: string) {
   try {
-    const res = api.post(`auth/forgot-password`, email);
+    const res = api.post(`auth/forgot-password`,{email:email} );
     return res;
   } catch (error) {
     console.log(error);
@@ -55,17 +55,36 @@ export async function verifyOTP({
 //     console.log(error);
 //   }
 // }
-export async function createPassword(newPassword: string) {
+// export async function createPassword(token:string,newPassword: string) {
+//   try {
+//     const res = await api.post(`auth/reset-password`, {
+//       newPassword,
+//     });
+//     return res.data;
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// }
+
+export async function createPassword(token: string, newPassword: string) {
   try {
-    const res = await api.post(`auth/reset-password`, {
-      newPassword,
-    });
+    const res = await api.post(
+      `auth/reset-password`,
+      { newPassword },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
     return res.data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 }
+
 
 // them update
 export async function themChange(data: FormData) {
