@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import jwt from "jsonwebtoken";
@@ -36,7 +37,7 @@ const handler = NextAuth({
           let data;
           try {
             data = JSON.parse(text);
-          } catch (err) {
+          } catch {
             console.error("❌ Failed to parse JSON response:", text);
             return null;
           }

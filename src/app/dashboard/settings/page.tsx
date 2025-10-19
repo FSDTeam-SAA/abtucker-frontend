@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useTheme } from "@/lib/theme-context";
 import { Button } from "@/components/ui/button";
 import { Check, Upload, Edit2, Trash2 } from "lucide-react";
-import { getStoredUser } from "@/lib/auth";
 import Image from "next/image";
 import { useThem } from "@/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -23,7 +22,6 @@ const COLOR_PRESETS = [
 // API function - make sure this matches your actual API
 
 export default function SettingsPage() {
-  const user = getStoredUser();
   const { data: session } = useSession();
   const { theme, updateTheme } = useTheme();
   const [selectedColors, setSelectedColors] = useState(theme.colors);

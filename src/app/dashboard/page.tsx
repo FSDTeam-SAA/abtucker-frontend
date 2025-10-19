@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { getStoredUser } from "@/lib/auth";
 import { Check, X, Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,7 +26,6 @@ import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/dashboard-header";
 
 export default function DashboardPage() {
-  const user = getStoredUser();
   const { data: session } = useSession();
 
   const [filter, setFilter] = useState("all");
