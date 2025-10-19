@@ -119,6 +119,7 @@ export default function DashboardPage() {
     );
   }
 
+  console.log(session?.user,'session')
   return (
     <div className="p-8">
       <div className="mb-8">

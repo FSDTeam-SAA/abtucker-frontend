@@ -73,7 +73,7 @@ const handler = NextAuth({
             email: userData.email,
             role: userData.role,
             accessToken: userData.accessToken,
-            image: null, // Add if your backend provides image
+            image: null, // Add  if your backend provides image
           };
         } catch (err) {
           console.error("❌ Authorize error:", err);
