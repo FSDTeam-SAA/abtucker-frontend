@@ -24,11 +24,12 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import DashboardHeader from "@/components/dashboard-header";
 
 export default function DashboardPage() {
   const user = getStoredUser();
-    const {data:session}=useSession()
-  
+  const { data: session } = useSession();
+
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
@@ -119,7 +120,7 @@ export default function DashboardPage() {
     );
   }
 
-  console.log(session?.user,'session')
+  console.log(session?.user, "session");
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -133,23 +134,7 @@ export default function DashboardPage() {
               today.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Image
-              width={40}
-              height={40}
-              src={`/user.jpg`}
-              alt={user?.name || "User"}
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <div className="font-semibold text-gray-900">
-                {session?.user?.name || "Olivia Rhye"}
-              </div>
-              <div className="text-sm text-gray-600">
-                {session?.user?.email || "olivia@untitledui.com"}
-              </div>
-            </div>
-          </div>
+          <DashboardHeader />
         </div>
       </div>
 

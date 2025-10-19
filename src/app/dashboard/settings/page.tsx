@@ -12,66 +12,64 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { themChange } from "@/lib/api";
 import { toast } from "sonner";
 import { useSession } from "next-auth/react";
+import DashboardHeader from "@/components/dashboard-header";
 
 const COLOR_PRESETS = [
-  { id: "purple", colors: ["#a855f7", "#d8b4fe"], label: "Purple" },
-  { id: "pink", colors: ["#ec4899", "#fbcfe8"], label: "Pink" },
-  { id: "cyan", colors: ["#06b6d4", "#a5f3fc"], label: "Cyan" },
+  { id: "purple", colors: ["#a855f7"], label: "Purple" },
+  { id: "pink", colors: ["#ec4899"], label: "Pink" },
+  { id: "cyan", colors: ["#06b6d4"], label: "Cyan" },
 ];
 
 // API function - make sure this matches your actual API
 
 export default function SettingsPage() {
   const user = getStoredUser();
-  const {data:session}=useSession()
+  const { data: session } = useSession();
   const { theme, updateTheme } = useTheme();
   const [selectedColors, setSelectedColors] = useState(theme.colors);
   const [logoPreview, setLogoPreview] = useState(theme.logo);
   const [hasChanges, setHasChanges] = useState(false);
-  const [agreed,] = useState(true); // Added missing state
+  const [agreed] = useState(true); // Added missing state
   const { data, isLoading, error } = useThem();
-  const queryClient=useQueryClient()
+  const queryClient = useQueryClient();
   const [formData, setFormData] = useState({
     colors: [] as string[], // Changed to array to match API
     logo: null as File | null,
   });
-console.log('color change',data)
+  console.log("color change", data);
   const logo = data?.data?.logo;
- console.log('session',session?.user)
+  console.log("session", session?.user);
   // Corrected mutation setup
   const themMutation = useMutation({
-    mutationFn:(data:FormData) =>themChange(data), 
-    mutationKey: ["them"], 
+    mutationFn: (data: FormData) => themChange(data),
+    mutationKey: ["them"],
     onSuccess: (data) => {
-     
-
-      toast.success(data.message)
-queryClient.invalidateQueries({queryKey:['them']})
+      toast.success(data.message);
+      queryClient.invalidateQueries({ queryKey: ["them"] });
       if (data.success) {
-        updateTheme({ 
-          colors: selectedColors, 
-          logo: logoPreview 
+        updateTheme({
+          colors: selectedColors,
+          logo: logoPreview,
         });
         setHasChanges(false);
       }
-
     },
     onError: (error) => {
-      console.error('Failed to update theme:', error);
-    }
+      console.error("Failed to update theme:", error);
+    },
   });
 
   const handleColorSelect = (colors: string[]) => {
     setSelectedColors(colors);
-    setFormData(prev => ({ ...prev, colors }));
+    setFormData((prev) => ({ ...prev, colors }));
     setHasChanges(true);
   };
 
   const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    
+
     if (file) {
-      setFormData(prev => ({ ...prev, logo: file }));
+      setFormData((prev) => ({ ...prev, logo: file }));
       const reader = new FileReader();
       reader.onloadend = () => {
         setLogoPreview(reader.result as string);
@@ -84,23 +82,23 @@ queryClient.invalidateQueries({queryKey:['them']})
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreed) return;
-    
+
     try {
       const formDataToSend = new FormData();
-      
+
       // Append colors as array (multiple entries with same key)
-      selectedColors.forEach(color => {
-        formDataToSend.append('color', color);
+      selectedColors.forEach((color) => {
+        formDataToSend.append("color", color);
       });
-      
+
       // Append logo if exists
       if (formData.logo) {
-        formDataToSend.append('logo', formData.logo);
+        formDataToSend.append("logo", formData.logo);
       }
-      
+
       await themMutation.mutateAsync(formDataToSend);
     } catch (error) {
-      console.error('Save error:', error);
+      console.error("Save error:", error);
     }
   };
 
@@ -109,14 +107,14 @@ queryClient.invalidateQueries({queryKey:['them']})
     setLogoPreview(theme.logo);
     setFormData({
       colors: theme.colors,
-      logo: null
+      logo: null,
     });
     setHasChanges(false);
   };
 
   const handleDeleteLogo = () => {
     setLogoPreview(null);
-    setFormData(prev => ({ ...prev, logo: null }));
+    setFormData((prev) => ({ ...prev, logo: null }));
     setHasChanges(true);
   };
 
@@ -135,10 +133,12 @@ queryClient.invalidateQueries({queryKey:['them']})
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
             <p className="text-gray-600">
-              Welcome back! Here&apos;s what&apos;s happening with your app today.
+              Welcome back! Here&apos;s what&apos;s happening with your app
+              today.
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <DashboardHeader />
+          {/* <div className="flex items-center gap-3">
             <Image
               width={40}
               height={40}
@@ -154,7 +154,7 @@ queryClient.invalidateQueries({queryKey:['them']})
                 {session?.user?.email || "olivia@untitledui.com"}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 
@@ -181,7 +181,7 @@ queryClient.invalidateQueries({queryKey:['them']})
                 >
                   {selectedColors[0] === preset.colors[0] &&
                     selectedColors[1] === preset.colors[1] && (
-                      <div className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
+                      <div className=" absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center">
                         <Check className="h-4 w-4 text-white" />
                       </div>
                     )}
@@ -190,10 +190,10 @@ queryClient.invalidateQueries({queryKey:['them']})
                       className="w-12 h-12 rounded"
                       style={{ backgroundColor: preset.colors[0] }}
                     />
-                    <div
+                    {/* <div
                       className="w-12 h-12 rounded"
                       style={{ backgroundColor: preset.colors[1] }}
-                    />
+                    /> */}
                   </div>
                 </button>
               ))}
@@ -261,7 +261,7 @@ queryClient.invalidateQueries({queryKey:['them']})
                   height={200}
                 />
                 <div className="absolute top-4 right-4 flex gap-2">
-                  <button 
+                  <button
                     type="button"
                     className="p-2 rounded-lg bg-primary text-white hover:bg-primary-hover"
                   >
