@@ -10,10 +10,9 @@ export default function HomePage() {
   const { data } = useThem();
   const [scanSize, setScanSize] = useState(350);
 
-
   const logo = data?.data?.logo;
-  console.log('home datas',data?.data.catImage)
-  
+  console.log("home datas", data?.data.catImage);
+
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -37,27 +36,30 @@ export default function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
-  //cat image 
-  const catImage1=data?.data.catImage[0];
-  const catImage2=data?.data.catImage[1]
-  console.log(data,'0')
-  console.log(catImage2,'1')
-  console.log('3',data?.data?.backgroundColor)
-const bgColor=data?.data?.backgroundColor;
-const gradient= bgColor?.length ?`linear-gradient(135deg,${bgColor.join(", ")})`: 'linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)'
-console.log(gradient,'5')
+  //cat image
+  const catImage1 = data?.data.catImage[0];
+  const catImage2 = data?.data.catImage[1];
+  const heroImage = data?.data.heroImage;
+  console.log(data, "0");
+  console.log(catImage2, "1");
+  console.log("3", data?.data?.backgroundColor);
+  const bgColor = data?.data?.backgroundColor;
+  const gradient = bgColor?.length
+    ? `linear-gradient(135deg,${bgColor.join(", ")})`
+    : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
+  console.log(gradient, "5");
   return (
-    <div className="animated-gradient relative overflow-hidden lg:h-screen bg-cover bg-center"
-    style={
-      {
-        background:gradient,
-        backgroundSize:'400% 400%',
-        animation:"gradientShift 15s ease infinite",
-      }
-    }
+    <div
+      className="animated-gradient relative overflow-hidden lg:h-screen bg-cover bg-center"
+      style={{
+        backgroundImage: gradient,
+        backgroundSize: "400% 400%",
+        backgroundRepeat: "no-repeat",
+        backgroundPosition: "center",
+        animation: "gradientShift 15s ease infinite",
+      }}
     >
-      <style jsx>{`
+      {/* <style jsx>{`
         @keyframes gradientShift {
           0% {
             background-position: 0% 50%;
@@ -69,8 +71,8 @@ console.log(gradient,'5')
             background-position: 0% 50%;
           }
         }
-      `}</style>
-      
+      `}</style> */}
+
       <div
         className="relative bg-cover bg-center min-h-screen"
         // style={{
@@ -78,10 +80,10 @@ console.log(gradient,'5')
         //    opacity: 0.7,
         // }}
       >
-          <div
-    className="absolute inset-0 bg-cover bg-center"
-    style={{ backgroundImage: "url('/bg.png')", opacity: 0.4 }}
-  ></div>
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: "url('/bg.png')", opacity: 0.4 }}
+        ></div>
         {/* Left color bars */}
         {/* <div className="hidden md:flex absolute left-0 top-0 bottom-0 w-8 md:w-12 lg:w-16 flex-col justify-around">
     {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
@@ -186,7 +188,7 @@ console.log(gradient,'5')
               <div className="flex justify-center">
                 <div className=" max-w-[756px] max-h-[760px] object-cover">
                   <Image
-                    src="/displayleft.png"
+                    src={heroImage || "/displayleft.png"}
                     alt="Characters"
                     width={1000}
                     height={1000}
@@ -206,7 +208,7 @@ console.log(gradient,'5')
                 />
               </div>
               <div className="relative bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl lg:max-w-lg w-full mx-auto flex flex-col justify-center">
-                <div className=" bg-white p-4 mx-auto sm:p-6 md:p-8 rounded-xl md:rounded-2xl border-2 md:border-4 border-gray-200 mb-4 md:mb-6">
+                <div className=" bg-white p-4 mx-auto sm:p-6  rounded-xl md:rounded-2xl  border-gray-200 mb-4 md:mb-6">
                   <QRCodeGenerator
                     url={
                       typeof window !== "undefined"
