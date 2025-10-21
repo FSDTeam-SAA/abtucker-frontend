@@ -8,12 +8,14 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
 import { useThem } from "@/hooks";
+import { image } from "@/lib/fackdata";
 
 export default function SubmitPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     childName: "",
     age: 0,
+    email:'',
     quote: "",
     photos: null as File | null,
     serial: "123",
@@ -23,6 +25,7 @@ export default function SubmitPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const { data } = useThem();
   const logo = data?.data?.logo;
+  const images = image;
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
@@ -55,6 +58,8 @@ export default function SubmitPage() {
       formDataToSent.append("age", String(formData.age));
       formDataToSent.append("quote", formData.quote);
       formDataToSent.append("serial", formData.serial);
+      formDataToSent.append("email", formData.email);
+
       if (formData.photos) {
         formDataToSent.append("photos", formData.photos);
       }
@@ -141,6 +146,20 @@ export default function SubmitPage() {
                   value={formData.age}
                   onChange={(e) =>
                     setFormData({ ...formData, age: Number(e.target.value) })
+                  }
+                  placeholder="Your child age"
+                  className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
+                />
+              </div>
+              <div>
+                <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
+                  Enter Your Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
                   }
                   placeholder="Your child age"
                   className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
@@ -280,14 +299,14 @@ export default function SubmitPage() {
               {/* Image positioned below the card */}
               <div
                 className="absolute -top-24 md:-top-26 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
-                style={{ transform: "rotate(30deg)" }}
+                style={{ transform: "rotate(70deg)" }}
               >
                 <Image
-                  src="/formright.png"
+                  src={images[1] || "/openeye.png"}
                   alt="decoration"
                   width={100}
                   height={100}
-                  className="object-contain w-full h-full"
+                  className="object-cover w-full h-full"
                 />
               </div>
             </div>
