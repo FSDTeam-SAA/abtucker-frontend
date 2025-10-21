@@ -52,12 +52,12 @@ console.log(gradient,'5')
     style={
       {
         background:gradient,
-        // backgroundSize:'400% 400%',
-        // animation:"gradientShift 15s ease infinite",
+        backgroundSize:'400% 400%',
+        animation:"gradientShift 15s ease infinite",
       }
     }
     >
-      {/* <style jsx>{`
+      <style jsx>{`
         @keyframes gradientShift {
           0% {
             background-position: 0% 50%;
@@ -69,7 +69,7 @@ console.log(gradient,'5')
             background-position: 0% 50%;
           }
         }
-      `}</style> */}
+      `}</style>
       
       <div
         className="relative bg-cover bg-center min-h-screen"
