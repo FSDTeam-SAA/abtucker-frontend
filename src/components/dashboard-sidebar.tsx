@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { useThem } from "@/hooks";
+import { signOut } from "next-auth/react";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -25,11 +26,16 @@ export function DashboardSidebar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
-  const handleLogout = () => {
-    setStoredUser(null);
-    router.push("/login");
-  };
-
+const handleLogout = async () => {
+  try {
+    await signOut({
+      redirect: true,
+      callbackUrl: "/login",
+    });
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
   const navItems = [
     {
       href: "/dashboard",
