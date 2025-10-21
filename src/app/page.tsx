@@ -9,10 +9,11 @@ import { useEffect, useState } from "react";
 export default function HomePage() {
   const { data } = useThem();
   const [scanSize, setScanSize] = useState(350);
-  const images = image;
-  console.log("ghjkl;", images);
+
 
   const logo = data?.data?.logo;
+  console.log('home datas',data?.data.catImage)
+  
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth >= 1024) {
@@ -36,8 +37,40 @@ export default function HomePage() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+
+  //cat image 
+  const catImage1=data?.data.catImage[0];
+  const catImage2=data?.data.catImage[1]
+  console.log(data,'0')
+  console.log(catImage2,'1')
+  console.log('3',data?.data?.backgroundColor)
+const bgColor=data?.data?.backgroundColor;
+const gradient= bgColor?.length ?`linear-gradient(135deg,${bgColor.join(", ")})`: 'linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)'
+console.log(gradient,'5')
   return (
-    <div className=" animated-gradient relative overflow-hidden lg:h-screen bg-cover bg-center">
+    <div className="animated-gradient relative overflow-hidden lg:h-screen bg-cover bg-center"
+    style={
+      {
+        background:gradient,
+        // backgroundSize:'400% 400%',
+        // animation:"gradientShift 15s ease infinite",
+      }
+    }
+    >
+      {/* <style jsx>{`
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+      `}</style> */}
+      
       <div
         className="relative bg-cover bg-center min-h-screen"
         // style={{
@@ -104,7 +137,7 @@ export default function HomePage() {
           style={{ transform: "rotate(150deg)" }}
         >
           <Image
-            src={images[1] || "/displaytopleft.png"}
+            src={catImage2 || "/displaytopleft.png"}
             alt=""
             fill
             className="object-cover"
@@ -117,7 +150,7 @@ export default function HomePage() {
           // style={{ animationDuration: "4s", animationDelay: "1s" }}
         >
           <Image
-            src={images[0] || "/displayleftbottom.png"}
+            src={catImage1 || "/displayleftbottom.png"}
             alt=""
             fill
             className="object-cover"
@@ -129,7 +162,7 @@ export default function HomePage() {
           style={{ transform: "rotate(-105deg)" }}
         >
           <Image
-            src={images[1] || "/displayrighttop.png"}
+            src={catImage2 || "/displayrighttop.png"}
             alt=""
             fill
             className="object-cover"
@@ -200,7 +233,7 @@ export default function HomePage() {
                   // style={{ animationDuration: "4s", animationDelay: "1.5s" }}
                 >
                   <Image
-                    src={images[1] || "/cakey-hero4.png"}
+                    src={catImage1 || "/cakey-hero4.png"}
                     alt=""
                     fill
                     className="object-cover"

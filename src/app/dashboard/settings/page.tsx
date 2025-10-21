@@ -61,6 +61,12 @@ export default function SettingsPage() {
       extendedTheme.backgroundColor?.[2] ||
       "#e5e7eb"
   );
+    const [backgroundColor4, setBackgroundColor4] = useState<string>(
+    extendedTheme.backgroundColors?.[2] ||
+      extendedTheme.backgroundColor?.[2] ||
+      "#e5e7eb"
+  );
+
 
   // State for images
   const [logoPreview, setLogoPreview] = useState<string | null>(
@@ -106,6 +112,11 @@ export default function SettingsPage() {
     setBackgroundColor3(
       extended.backgroundColors?.[2] ||
         extended.backgroundColor?.[2] ||
+        "#e5e7eb"
+    );
+       setBackgroundColor4(
+      extended.backgroundColors?.[3] ||
+        extended.backgroundColor?.[3] ||
         "#e5e7eb"
     );
     setLogoPreview(extended.logo || null);
@@ -178,10 +189,10 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Logo file size should be less than 5MB");
-        return;
-      }
+      // if (file.size > 5 * 1024 * 1024) {
+      //   toast.error("Logo file size should be less than 5MB");
+      //   return;
+      // }
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
@@ -208,10 +219,10 @@ export default function SettingsPage() {
     const file = e.target.files?.[0];
     if (file) {
       // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        toast.error("Hero image file size should be less than 5MB");
-        return;
-      }
+      // if (file.size > 5 * 1024 * 1024) {
+      //   toast.error("Hero image file size should be less than 5MB");
+      //   return;
+      // }
 
       // Validate file type
       if (!file.type.startsWith("image/")) {
@@ -238,10 +249,10 @@ export default function SettingsPage() {
       const file = e.target.files?.[0];
       if (file) {
         // Validate file size (max 5MB)
-        if (file.size > 5 * 1024 * 1024) {
-          toast.error("Cat image file size should be less than 5MB");
-          return;
-        }
+        // if (file.size > 5 * 1024 * 1024) {
+        //   toast.error("Cat image file size should be less than 5MB");
+        //   return;
+        // }
 
         // Validate file type
         if (!file.type.startsWith("image/")) {
@@ -284,6 +295,8 @@ export default function SettingsPage() {
       formDataToSend.append("backgroundColor", backgroundColor);
       formDataToSend.append("backgroundColor", backgroundColor2);
       formDataToSend.append("backgroundColor", backgroundColor3);
+      formDataToSend.append("backgroundColor", backgroundColor4);
+
 
       // Only append logo if there's a new file to upload
       if (logoFile) {
@@ -349,6 +362,12 @@ export default function SettingsPage() {
         extended.backgroundColor?.[2] ||
         "#e5e7eb"
     );
+        setBackgroundColor4(
+      extended.backgroundColors?.[3] ||
+        extended.backgroundColor?.[3] ||
+        "#e5e7eb"
+    );
+    
     setLogoPreview(extended.logo || null);
     setHeroImagePreview(extended.heroImage || null);
     setCatImagePreview(extended.catImage || [null, null]);
@@ -466,8 +485,8 @@ export default function SettingsPage() {
             <h2 className="text-xl font-semibold text-gray-900 mb-4">
               Background Colors
             </h2>
-            <div className="grid grid-cols-3 gap-4">
-              {[0, 1, 2].map((index) => (
+            <div className="grid grid-cols-4 gap-4">
+              {[0, 1, 2,3].map((index) => (
                 <div key={index} className="flex flex-col items-center gap-2">
                   <label className="text-sm text-gray-600">
                     Background {index + 1}
@@ -475,7 +494,7 @@ export default function SettingsPage() {
                   <input
                     type="color"
                     value={
-                      [backgroundColor, backgroundColor2, backgroundColor3][
+                      [backgroundColor, backgroundColor2, backgroundColor3,backgroundColor4][
                         index
                       ]
                     }

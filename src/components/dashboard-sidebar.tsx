@@ -26,6 +26,7 @@ export function DashboardSidebar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
+  console.log('data them',data?.data?.catImage)
 const handleLogout = async () => {
   try {
     await signOut({

@@ -92,7 +92,7 @@ export async function themChange(data: FormData) {
     const res = await api.post(`theme`, data);
     return res.data;
   } catch (error) {
-    console.log(error);
+    console.log('theammmmmmm',error);
   }
 }
 // export async function themChange(data: FormData) {
