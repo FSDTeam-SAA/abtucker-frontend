@@ -32,12 +32,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useThem } from "@/hooks";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-  console.log(date, "hey date ");
+    const { data:them } = useThem();
+  
+  // console.log(date, "hey date ");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
@@ -181,6 +184,8 @@ export default function DashboardPage() {
   const formate = dates.toUTCString().replace(" 00:45:23 GMT", "");
   console.log(formate);
 
+
+  const color= them?.data?.color
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -252,8 +257,9 @@ export default function DashboardPage() {
           </div>
 
           <Button
+            style={{ backgroundColor: color }}
             onClick={handleBulkApprove}
-            className="bg-primary hover:bg-primary-hover text-white cursor-pointer"
+            className={` hover:bg-primary-hover text-white cursor-pointer`}
           >
             Approve All ({filteredSubmissions?.length || 0})
           </Button>

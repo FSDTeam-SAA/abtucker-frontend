@@ -507,6 +507,9 @@ export default function SettingsPage() {
               Cancel
             </Button>
             <Button
+            style={{
+              backgroundColor: color
+            }}
               onClick={handleSave}
               disabled={!hasChanges || themMutation.isPending}
               className="flex-1 bg-primary hover:bg-primary-hover"
@@ -517,11 +520,15 @@ export default function SettingsPage() {
         </div>
 
         {/* Logo Preview */}
-        <div className="bg-white p-6 rounded-lg shadow h-fit">
+        <div className="bg-white p-6 rounded-lg shadow  h-fit">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Logo Preview
           </h2>
-          <div className="relative aspect-square rounded-full border-4 border-cyan-200 overflow-hidden bg-white flex items-center justify-center">
+          <div style={
+            { 
+              borderColor: color
+            }
+          } className="relative aspect-square rounded-full border-4  overflow-hidden bg-white flex items-center justify-center">
             {imagePreviews.logo ? (
               <>
                 <Image

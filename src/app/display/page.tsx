@@ -127,6 +127,7 @@ export default function DisplayPage() {
     );
   }
   const bgColor = them?.data?.backgroundColor;
+  console.log(bgColor,'fghjk')
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
     : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
@@ -233,12 +234,13 @@ export default function DisplayPage() {
                   {/* Photo Card */}
                   <div
                     className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
-                      borderColors[index % borderColors.length]
-                    } ${
-                      index === 1
-                        ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
-                        : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
-                    }`}
+    index === 1
+      ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
+      : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
+  }`}
+  style={{
+    borderColor: bgColor?.[index % bgColor.length] || "#000",
+  }}
                   >
                     <Image
                       src={moment.photo || "/placeholder.svg"}
