@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { LayoutGrid, Settings, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { setStoredUser } from "@/lib/auth";
+// import { setStoredUser } from "@/lib/auth";
 import {
   Dialog,
   DialogContent,
@@ -22,7 +22,7 @@ import { signOut } from "next-auth/react";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
