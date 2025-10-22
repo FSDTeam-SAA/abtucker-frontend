@@ -22,7 +22,7 @@ export interface Child {
 export interface Theme {
   color?: string;
   logo?: string;
-  backgroundColors?: string[];  // ADD THIS
-  heroImage?: string;           // ADD THIS
-  catImage?: string[];          // ADD THIS
+  backgroundColors?: string[];  
+  heroImage?: string;           
+  catImage?: string[];          
 }

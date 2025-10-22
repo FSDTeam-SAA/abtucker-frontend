@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { useThem } from "@/hooks";
+import { signOut } from "next-auth/react";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
@@ -25,11 +26,17 @@ export function DashboardSidebar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
-  const handleLogout = () => {
-    setStoredUser(null);
-    router.push("/login");
-  };
-
+  console.log('data them',data?.data?.catImage)
+const handleLogout = async () => {
+  try {
+    await signOut({
+      redirect: true,
+      callbackUrl: "/login",
+    });
+  } catch (error) {
+    console.error("Logout failed:", error);
+  }
+};
   const navItems = [
     {
       href: "/dashboard",
@@ -42,6 +49,8 @@ export function DashboardSidebar() {
       icon: Settings,
     },
   ];
+
+  const color= data?.data?.color
 
   return (
     <>
@@ -67,12 +76,15 @@ export function DashboardSidebar() {
             const isActive = pathname === item.href;
             return (
               <Link
+              style={{
+                backgroundColor: isActive ? color : undefined
+              }}
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
                   isActive
-                    ? "bg-primary text-white"
+                    ? " text-white"
                     : "text-gray-700 hover:bg-gray-100"
                 )}
               >

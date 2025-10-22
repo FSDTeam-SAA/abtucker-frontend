@@ -7,6 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Submission } from "@/lib/api";
 import { Child } from "@/types/submition";
 import { image } from "@/lib/fackdata";
+import { useThem } from "@/hooks";
 
 interface Moment {
   id: number | string;
@@ -42,6 +43,7 @@ function transformApiData(apiData: ApiItem[]): Moment[] {
 export default function DisplayPage() {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { data: them } = useThem();
 
   const {
     data: datas,
@@ -124,11 +126,25 @@ export default function DisplayPage() {
       </div>
     );
   }
-  console.log(displayMoments, "fghjkl");
+  const bgColor = them?.data?.backgroundColor;
+  console.log(bgColor,'fghjk')
+  const gradient = bgColor?.length
+    ? `linear-gradient(135deg,${bgColor.join(", ")})`
+    : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
+  console.log(gradient, "5");
+
+  const catsImage = them?.data?.catImage[0];
   return (
-    <div className="animated-gradient relative overflow-hidden h-screen bg-cover bg-center">
+    <div
+      className="animated-gradient relative overflow-hidden h-screen bg-cover bg-center"
+      style={{
+        background: gradient,
+        backgroundSize: "400% 400%",
+        animation: "gradientShift 15s ease infinite",
+      }}
+    >
       <div
-        className="relative bg-cover bg-center h-screen flex flex-col"
+        className=" relative bg-cover bg-center h-screen flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
         {/* Decorative Sides */}
@@ -207,7 +223,7 @@ export default function DisplayPage() {
                     } top-8 md:top-14 z-0`}
                   >
                     <Image
-                      src={image[1] || "/cakey-hero4.png"}
+                      src={catsImage || "/cakey-hero4.png"}
                       alt="decoration"
                       fill
                       className="object-cover"
@@ -218,12 +234,13 @@ export default function DisplayPage() {
                   {/* Photo Card */}
                   <div
                     className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
-                      borderColors[index % borderColors.length]
-                    } ${
-                      index === 1
-                        ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
-                        : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
-                    }`}
+    index === 1
+      ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
+      : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
+  }`}
+  style={{
+    borderColor: bgColor?.[index % bgColor.length] || "#000",
+  }}
                   >
                     <Image
                       src={moment.photo || "/placeholder.svg"}

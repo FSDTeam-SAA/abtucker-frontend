@@ -32,12 +32,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useThem } from "@/hooks";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
   const [open, setOpen] = React.useState(false);
-  const [date, setDate] = React.useState<Date | undefined>(new Date()); 
-  console.log(date, "hey date ");
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+    const { data:them } = useThem();
+  
+  // console.log(date, "hey date ");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
@@ -155,7 +158,9 @@ export default function DashboardPage() {
     );
   }
 
-  const totalPages = Math.ceil((filteredSubmissions?.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil(
+    (filteredSubmissions?.length || 0) / itemsPerPage
+  );
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubmissions = filteredSubmissions?.slice(
     startIndex,
@@ -178,7 +183,9 @@ export default function DashboardPage() {
   const dates = new Date(allSubmissions?.[0]?.createdAt || "");
   const formate = dates.toUTCString().replace(" 00:45:23 GMT", "");
   console.log(formate);
-  
+
+
+  const color= them?.data?.color
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -188,7 +195,8 @@ export default function DashboardPage() {
               Answer&apos;s Submissions
             </h1>
             <p className="text-gray-600">
-              Welcome back! Here&apos;s what&apos;s happening with your app today.
+              Welcome back! Here&apos;s what&apos;s happening with your app
+              today.
             </p>
           </div>
           <DashboardHeader />
@@ -249,8 +257,9 @@ export default function DashboardPage() {
           </div>
 
           <Button
+            style={{ backgroundColor: color }}
             onClick={handleBulkApprove}
-            className="bg-primary hover:bg-primary-hover text-white cursor-pointer"
+            className={` hover:bg-primary-hover text-white cursor-pointer`}
           >
             Approve All ({filteredSubmissions?.length || 0})
           </Button>
@@ -262,6 +271,10 @@ export default function DashboardPage() {
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   Serial
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+
+                   Email
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   User&apos;s Answer
@@ -276,6 +289,9 @@ export default function DashboardPage() {
                 <tr key={submission._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">
                     #{submission.serial}
+                  </td>
+                   <td className="px-6 py-4 text-sm text-gray-700">
+                    <div className="line-clamp-2">{submission.email ? submission.email :'NO Email'}</div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="line-clamp-2">{submission.quote}</div>
@@ -327,7 +343,10 @@ export default function DashboardPage() {
         <div className="p-6 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-600">
             Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredSubmissions?.length || 0)}{" "}
+            {Math.min(
+              startIndex + itemsPerPage,
+              filteredSubmissions?.length || 0
+            )}{" "}
             of {filteredSubmissions?.length || 0} results
           </div>
           <div className="flex items-center gap-2">
