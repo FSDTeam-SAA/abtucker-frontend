@@ -23,6 +23,7 @@ export interface SubmissionType {
   status: "active" | "deactivate" | "pending";
   photos: File[] | null;
   createdAt: string;
+  email?:string;
 }
 
 export interface User {

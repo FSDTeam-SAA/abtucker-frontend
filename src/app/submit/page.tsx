@@ -15,7 +15,7 @@ export default function SubmitPage() {
   const [formData, setFormData] = useState({
     childName: "",
     age: 0,
-    email:'',
+    email: "",
     quote: "",
     photos: null as File | null,
     serial: "123",
@@ -25,7 +25,9 @@ export default function SubmitPage() {
   const [preview, setPreview] = useState<string | null>(null);
   const { data } = useThem();
   const logo = data?.data?.logo;
-  const images = image;
+  console.log(data?.data)
+   const catImage1=data?.data.catImage[0];
+  const catImage2=data?.data.catImage[1]
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
@@ -77,6 +79,9 @@ export default function SubmitPage() {
   const isFormValid =
     formData.childName && formData.quote && formData.photos && agreed;
 
+
+    console.log('100',catImage2)
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* First image moved to bottom */}
@@ -87,7 +92,7 @@ export default function SubmitPage() {
         }}
       >
         <Image
-          src="/formbottom.png"
+          src={catImage2||"/formbottom.png"}
           alt="bottom"
           fill
           className="object-contain"
@@ -110,8 +115,9 @@ export default function SubmitPage() {
           Fill out a quick submission form
         </h1>
         <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center max-w-3xl text-balance px-4">
-          Scan the QR code and submit your child&apos;s funniest quotes, photos,
-          and moments—live on the big screen!
+          Send us your funniest kid quotes, photos, and moments to display live
+          on the big screen! We may feature quotes on the @livefromsnacktime
+          Instagram, Facebook and X accounts!&rdquo;
         </p>
 
         <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative">
@@ -302,7 +308,7 @@ export default function SubmitPage() {
                 style={{ transform: "rotate(70deg)" }}
               >
                 <Image
-                  src={images[1] || "/openeye.png"}
+                  src={catImage2 || "/openeye.png"}
                   alt="decoration"
                   width={100}
                   height={100}
