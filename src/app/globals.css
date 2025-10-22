@@ -198,3 +198,23 @@
   border-right: 17px solid transparent;
   border-top: 17px solid white;
 }
+
+
+/* loader animation  */
+
+@keyframes gradient-xy {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-xy {
+  background-size: 200% 200%;
+  animation: gradient-xy 6s ease infinite;
+}

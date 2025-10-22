@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
 import { useThem } from "@/hooks";
-import { image } from "@/lib/fackdata";
+// import { image } from "@/lib/fackdata";
 
 export default function SubmitPage() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export default function SubmitPage() {
   const { data } = useThem();
   const logo = data?.data?.logo;
   console.log(data?.data)
-   const catImage1=data?.data.catImage[0];
+  //  const catImage1=data?.data.catImage[0];
   const catImage2=data?.data.catImage[1]
 
   const formMutation = useMutation({
@@ -120,7 +120,7 @@ export default function SubmitPage() {
           Instagram, Facebook and X accounts!&rdquo;
         </p>
 
-        <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative">
+        <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative z-40">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"
@@ -183,7 +183,7 @@ export default function SubmitPage() {
                     setFormData({ ...formData, quote: e.target.value })
                   }
                   placeholder="Write your message here..."
-                  className="w-full h-24 md:h-32 px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary resize-none text-base md:text-lg"
+                  className="w-full z-50 h-24 md:h-32 px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary resize-none text-base md:text-lg"
                   required
                 />
               </div>
@@ -242,7 +242,7 @@ export default function SubmitPage() {
                           <p className="text-gray-600 mb-4 text-sm md:text-base">
                             Choose the files you want to upload from your Photo
                           </p>
-                          <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl transition-colors">
+                          {/* <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl transition-colors">
                             <svg
                               className="w-5 h-5 md:w-6 md:h-6"
                               fill="none"
@@ -256,7 +256,7 @@ export default function SubmitPage() {
                                 d="M12 4v16m8-8H4"
                               />
                             </svg>
-                          </div>
+                          </div> */}
                         </>
                       )}
                     </div>

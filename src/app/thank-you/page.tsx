@@ -5,126 +5,129 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
+import { useThem } from "@/hooks";
 
 export default function ThankYouPage() {
   const router = useRouter();
   const [showConfetti, setShowConfetti] = useState(true);
   const { width, height } = useWindowSize();
+  const { data } = useThem();
 
   useEffect(() => {
     // Stop confetti after 2 minutes (120,000 milliseconds)
     const timer = setTimeout(() => setShowConfetti(false), 120000);
     return () => clearTimeout(timer);
   }, []);
-
+  const catImage1 = data?.data.catImage[0];
+  const catImage2 = data?.data.catImage[1];
   return (
     <div className="min-h-screen bg-gray-300 relative overflow-hidden flex items-center justify-center p-4">
       {/* Full Body Confetti - Multiple layers for complete coverage */}
-   {showConfetti && (
-  <>
-    {/* Base layer - Slow & Small confetti */}
-    <Confetti
-      width={width}
-      height={height}
-      numberOfPieces={80} // Reduced for slower feel
-      recycle={true}
-      gravity={0.1} // Slower fall
-      initialVelocityY={8} // Slower start
-      colors={[
-        "#fbbf24",
-        "#06b6d4",
-        "#ec4899",
-        "#a855f7",
-        "#10b981",
-        "#f97316",
-      ]}
-      drawShape={(ctx) => {
-        // Small circles
-        ctx.beginPath();
-        ctx.arc(0, 0, 1.5, 0, 2 * Math.PI); // Even smaller radius
-        ctx.fill();
-      }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        pointerEvents: "none",
-        zIndex: 20,
-      }}
-    />
+      {showConfetti && (
+        <>
+          {/* Base layer - Slow & Small confetti */}
+          <Confetti
+            width={width}
+            height={height}
+            numberOfPieces={80} // Reduced for slower feel
+            recycle={true}
+            gravity={0.1} // Slower fall
+            initialVelocityY={8} // Slower start
+            colors={[
+              "#fbbf24",
+              "#06b6d4",
+              "#ec4899",
+              "#a855f7",
+              "#10b981",
+              "#f97316",
+            ]}
+            drawShape={(ctx) => {
+              // Small circles
+              ctx.beginPath();
+              ctx.arc(0, 0, 1.5, 0, 2 * Math.PI); // Even smaller radius
+              ctx.fill();
+            }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              pointerEvents: "none",
+              zIndex: 20,
+            }}
+          />
 
-    {/* Second layer - Slow small rectangles */}
-    <Confetti
-      width={width}
-      height={height}
-      numberOfPieces={100}
-      recycle={true}
-      gravity={0.08} // Even slower
-      initialVelocityY={6} // Even slower start
-      colors={["#ef4444", "#8b5cf6", "#14b8a6", "#eab308", "#3b82f6"]}
-      drawShape={(ctx) => {
-        // Smaller rectangular shapes
-        ctx.beginPath();
-        ctx.rect(-1, -3, 2, 6); // Even smaller rectangle
-        ctx.fill();
-      }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        pointerEvents: "none",
-        zIndex: 21,
-      }}
-    />
+          {/* Second layer - Slow small rectangles */}
+          <Confetti
+            width={width}
+            height={height}
+            numberOfPieces={100}
+            recycle={true}
+            gravity={0.08} // Even slower
+            initialVelocityY={6} // Even slower start
+            colors={["#ef4444", "#8b5cf6", "#14b8a6", "#eab308", "#3b82f6"]}
+            drawShape={(ctx) => {
+              // Smaller rectangular shapes
+              ctx.beginPath();
+              ctx.rect(-1, -3, 2, 6); // Even smaller rectangle
+              ctx.fill();
+            }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              pointerEvents: "none",
+              zIndex: 21,
+            }}
+          />
 
-    {/* Third layer - Slow tiny dots */}
-    <Confetti
-      width={width}
-      height={height}
-      numberOfPieces={120}
-      recycle={true}
-      gravity={0.06} // Slowest
-      initialVelocityY={5} // Slowest start
-      colors={[
-        "#f87171",
-        "#60a5fa",
-        "#34d399",
-        "#fbbf24",
-        "#a78bfa",
-        "#c084fc",
-      ]}
-      drawShape={(ctx) => {
-        // Tiny dots
-        ctx.beginPath();
-        ctx.arc(0, 0, 0.8, 0, 2 * Math.PI); // Fixed: 2 * Math.PI for full circle
-        ctx.fill();
-      }}
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100vw",
-        height: "100vh",
-        pointerEvents: "none",
-        zIndex: 22,
-      }}
-    />
-  </>
-)}
+          {/* Third layer - Slow tiny dots */}
+          <Confetti
+            width={width}
+            height={height}
+            numberOfPieces={120}
+            recycle={true}
+            gravity={0.06} // Slowest
+            initialVelocityY={5} // Slowest start
+            colors={[
+              "#f87171",
+              "#60a5fa",
+              "#34d399",
+              "#fbbf24",
+              "#a78bfa",
+              "#c084fc",
+            ]}
+            drawShape={(ctx) => {
+              // Tiny dots
+              ctx.beginPath();
+              ctx.arc(0, 0, 0.8, 0, 2 * Math.PI); // Fixed: 2 * Math.PI for full circle
+              ctx.fill();
+            }}
+            style={{
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100vw",
+              height: "100vh",
+              pointerEvents: "none",
+              zIndex: 22,
+            }}
+          />
+        </>
+      )}
       {/* Decorative cat characters */}
       <div
         className="absolute bottom-8 md:bottom-12 lg:-bottom-12 right-4 md:right-8 lg:-right-6 w-20 md:w-24 lg:w-32 h-20 md:h-30 lg:h-44"
         style={{ transform: "rotate(300deg)", zIndex: 50 }}
       >
         <Image
-          src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/71f48d9af0ca5ff930879a0c27670141f4c7ab86%20%281%29-f4r828EAqHgYZpQoHx34re5iHrCpdk.png"
+          src={catImage1 ||'/openeye.png'}
           alt=""
           fill
-          className="object-contain"
+          className="object-cover"
         />
       </div>
 
@@ -135,10 +138,10 @@ export default function ThankYouPage() {
           style={{ transform: "rotate(-40deg)" }}
         >
           <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/71f48d9af0ca5ff930879a0c27670141f4c7ab86%20%281%29-f4r828EAqHgYZpQoHx34re5iHrCpdk.png"
+                  src={catImage2 ||'/openeye.png'}
             alt=""
             fill
-            className="object-contain"
+            className="object-cover"
           />
         </div>
 

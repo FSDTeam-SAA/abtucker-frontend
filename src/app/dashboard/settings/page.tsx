@@ -10,7 +10,7 @@ import { useThem } from "@/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { themChange } from "@/lib/api";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/dashboard-header";
 
 interface ExtendedTheme {
@@ -28,10 +28,10 @@ const DEFAULT_COLORS = {
   backgrounds: ["#ffffff", "#f3f4f6", "#e5e7eb", "#d1d5db"]
 };
 
-const FILE_VALIDATION = {
-  maxSize: 5 * 1024 * 1024,
-  types: ["image/"]
-} as const;
+// const FILE_VALIDATION = {
+//   maxSize: 5 * 1024 * 1024,
+//   types: ["image/"]
+// } as const;
 
 // Custom hooks
 const useThemeState = (theme: ExtendedTheme) => {
@@ -212,12 +212,12 @@ const ImageUploader: React.FC<{
     >
       <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
       <p className="text-gray-600 text-sm mb-2">Upload {label.toLowerCase()}</p>
-      <button
+      {/* <button
         type="button"
         className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white hover:bg-primary-hover text-sm"
       >
         +
-      </button>
+      </button> */}
     </label>
     {preview && (
       <div className="mt-4 relative">
@@ -252,7 +252,7 @@ const ImageUploader: React.FC<{
 );
 
 export default function SettingsPage() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const { theme, updateTheme } = useTheme();
   const { data, isLoading, error } = useThem();
   const queryClient = useQueryClient();
