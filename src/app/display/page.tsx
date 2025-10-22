@@ -6,8 +6,9 @@ import { QRCodeGenerator } from "@/components/qr-code";
 import { useQuery } from "@tanstack/react-query";
 import { Submission } from "@/lib/api";
 import { Child } from "@/types/submition";
-import { image } from "@/lib/fackdata";
+// import { image } from "@/lib/fackdata";
 import { useThem } from "@/hooks";
+import Loader from "@/components/Loader";
 
 interface Moment {
   id: number | string;
@@ -47,7 +48,7 @@ export default function DisplayPage() {
 
   const {
     data: datas,
-    error,
+
     isLoading,
   } = useQuery({
     queryKey: ["submission"],
@@ -58,10 +59,17 @@ export default function DisplayPage() {
   useEffect(() => {
     if (data && Array.isArray(data)) {
       const transformedData = transformApiData(data);
-      setMoments(transformedData);
 
-      // Also update localStorage for backup
-      localStorage.setItem("moments", JSON.stringify(transformedData));
+      // ✅ Only update if data actually changed
+      setMoments((prev) => {
+        const prevStr = JSON.stringify(prev);
+        const newStr = JSON.stringify(transformedData);
+        if (prevStr !== newStr) {
+          localStorage.setItem("moments", newStr);
+          return transformedData;
+        }
+        return prev;
+      });
     } else {
       // Fallback to localStorage if no API data
       const stored = localStorage.getItem("moments");
@@ -105,29 +113,25 @@ export default function DisplayPage() {
   };
 
   const displayMoments = getDisplayMoments();
-  const borderColors = [
-    "border-purple-500",
-    "border-pink-500",
-    "border-cyan-500",
-  ];
+  // const borderColors = [
+  //   "border-purple-500",
+  //   "border-pink-500",
+  //   "border-cyan-500",
+  // ];
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
-        <div className="text-white text-xl">Loading moments...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
-        <div className="text-white text-xl">Error loading moments</div>
-      </div>
-    );
-  }
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
+  //       <div className="text-white text-xl">Error loading moments</div>
+  //     </div>
+  //   );
+  // }
   const bgColor = them?.data?.backgroundColor;
-  console.log(bgColor,'fghjk')
+  console.log(bgColor, "fghjk");
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
     : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
@@ -147,7 +151,7 @@ export default function DisplayPage() {
         className=" relative bg-cover bg-center h-screen flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
-        {/* Decorative Sides */}
+        {/* left  Sides cats */}
         <div
           className="hidden md:flex absolute left-0 top-0 bottom-0 w-16"
           style={{ transform: "rotate(0deg)" }}
@@ -160,7 +164,7 @@ export default function DisplayPage() {
             className="h-full object-cover"
           />
         </div>
-
+        {/* right sides cats  */}
         <div
           className="hidden md:flex absolute right-0 top-0 bottom-0 w-16"
           style={{ transform: "rotate(180deg)" }}
@@ -202,7 +206,7 @@ export default function DisplayPage() {
         </div>
 
         {/* 🔹 Section 2: Static 3-Item Grid */}
-        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-20">
+        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-40">
           {displayMoments.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
               {displayMoments.map((moment, index) => (
@@ -210,7 +214,7 @@ export default function DisplayPage() {
                   key={`${moment.id}-${index}`}
                   className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
                     index === 1
-                      ? "scale-100 -mt-8 md:-mt-12 z-20"
+                      ? "scale-95 -mt-8 md:-mt-12 z-20"
                       : "scale-90 mt-8 md:mt-12 opacity-90"
                   }`}
                 >
@@ -234,13 +238,13 @@ export default function DisplayPage() {
                   {/* Photo Card */}
                   <div
                     className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
-    index === 1
-      ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
-      : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
-  }`}
-  style={{
-    borderColor: bgColor?.[index % bgColor.length] || "#000",
-  }}
+                      index === 1
+                        ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
+                        : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
+                    }`}
+                    style={{
+                      borderColor: bgColor?.[index % bgColor.length] || "#000",
+                    }}
                   >
                     <Image
                       src={moment.photo || "/placeholder.svg"}

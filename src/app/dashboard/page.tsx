@@ -22,11 +22,11 @@ import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import DashboardHeader from "@/components/dashboard-header";
 import { Calendar } from "@/components/ui/calendar";
 import { ChevronDownIcon } from "lucide-react";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
@@ -35,7 +35,7 @@ import {
 import { useThem } from "@/hooks";
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  // const { data: session } = useSession();
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
     const { data:them } = useThem();

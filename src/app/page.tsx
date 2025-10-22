@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { QRCodeGenerator } from "@/components/qr-code";
 import { useThem } from "@/hooks";
-import { image } from "@/lib/fackdata";
+// import { image } from "@/lib/fackdata";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
@@ -136,10 +136,10 @@ export default function HomePage() {
 
         <div
           className="hidden lg:block absolute -top-16 p-1 -left-14 xl:-left-14 w-16 md:w-20 lg:w-44 h-16 md:h-20 lg:h-44 z-50"
-          style={{ transform: "rotate(150deg)" }}
+          style={{ transform: "rotate(135deg)" }}
         >
           <Image
-            src={catImage2 || "/displaytopleft.png"}
+            src={catImage2 || "/openeye.png"}
             alt=""
             fill
             className="object-cover"
@@ -152,7 +152,7 @@ export default function HomePage() {
           // style={{ animationDuration: "4s", animationDelay: "1s" }}
         >
           <Image
-            src={catImage1 || "/displayleftbottom.png"}
+            src={catImage1 || "/openeye.png"}
             alt=""
             fill
             className="object-cover"
@@ -161,10 +161,10 @@ export default function HomePage() {
 
         <div
           className="hidden lg:block absolute -top-12 right-0 xl:-right-12 w-20 md:w-24 lg:w-44 h-20 md:h-24 lg:h-44"
-          style={{ transform: "rotate(-105deg)" }}
+          style={{ transform: "rotate(-140deg)" }}
         >
           <Image
-            src={catImage2 || "/displayrighttop.png"}
+            src={catImage2 || "/openeye.png"}
             alt=""
             fill
             className="object-cover"
@@ -172,27 +172,27 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 md:px-[120px] lg:px-[196px] mx-auto  py-8 md:py-12 lg:py-16 min-h-screen ">
-          <div className="flex flex-col  lg:flex-row   gap-8 md:gap-12 lg:gap-16 items-center w-full  mx-auto">
+          <div className="flex flex-col  lg:flex-row   gap-8 md:gap-12 lg:gap-16 items-center w-full justify-center  mx-auto">
             {/* Left column */}
             <div className="w-full lg:w-[65%] ">
-              <div className="mx-auto">
-                <h1 className="text-[35px] lg:text-[55px]  font-normal  text-[#343A40] mb-4 md:mb-6 font-coiny leading-[150%]">
+              <div className="mx-auto text-center">
+                <h1 className="text-[35px] lg:text-[55px] text-center  font-normal  text-[#343A40] mb-4 md:mb-6 font-coiny leading-[150%]">
                   Share Your Favorite Moment!
                 </h1>
-                <p className="text-lg sm:text-xl ml-8 md:text-2xl text-[#343A40]  md:w-[80%] font-semibold text-center">
+                <p className="text-lg sm:text-xl ml-8 md:text-2xl text-[#343A40] inline-block  md:w-[80%] font-semibold text-center">
                   Submit your child&apos;s funniest quotes or photos and see
                   them live on the big screen.
                 </p>
               </div>
 
               <div className="flex justify-center">
-                <div className=" max-w-[756px] max-h-[760px] object-cover">
+                <div className=" max-w-[756px] max-h-[560px] object-cover">
                   <Image
                     src={heroImage || "/displayleft.png"}
                     alt="Characters"
-                    width={1000}
-                    height={1000}
-                    className=" w-full h-full"
+                    width={760}
+                    height={760}
+                    className=" w-full h-full object-cover"
                   />
                 </div>
               </div>
