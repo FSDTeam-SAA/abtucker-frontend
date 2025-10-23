@@ -6,6 +6,7 @@ import Image from "next/image";
 import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { useThem } from "@/hooks";
+import Link from "next/link";
 
 export default function ThankYouPage() {
   const router = useRouter();
@@ -172,10 +173,10 @@ export default function ThankYouPage() {
             Your child&apos;s moment is being reviewed — it may appear live on
             the big screen soon!
           </p>
-
+          <Link href={`https://www.livefromsnacktime.com/`}>Click Here</Link>
           <button
             onClick={() => router.push("/display")}
-            className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
+            className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover cursor-pointer text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
           >
             Submit Another Moment
           </button>

@@ -1,6 +1,21 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+:root {
+  --font-poppins: "Poppins", sans-serif;
+  --font-coiny: "Coiny", cursive;
+}
+
+body {
+  font-family: var(--font-poppins);
+}
+
+/* When you want to use Coiny manually */
+.font-coiny {
+  font-family: var(--font-coiny);
+}
+
+
 @custom-variant dark (&:is(.dark *));
 
 .font-coiny {

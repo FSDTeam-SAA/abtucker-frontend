@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Coiny, Geist, Geist_Mono } from "next/font/google";
+import { Coiny, Geist, Geist_Mono, Poppins } from "next/font/google";
 import "./globals.css";
 import TanstackProvider from "@/provider/tanstackProvider";
 import SessionWrapper from "@/provider/session-wrapper";
@@ -9,7 +9,11 @@ const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
-
+const poppins = Poppins({
+  variable: "--font-poppins",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+});
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -34,7 +38,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${coiny.variable} antialiased`}
+        className={`${poppins.variable} ${geistSans.variable} ${geistMono.variable} ${coiny.variable} font-poppins antialiased`}
       >
         <SessionWrapper>
           <TanstackProvider>{children}</TanstackProvider>
