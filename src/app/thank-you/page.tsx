@@ -21,6 +21,7 @@ export default function ThankYouPage() {
   }, []);
   const catImage1 = data?.data.catImage[0];
   const catImage2 = data?.data.catImage[1];
+  const color=data?.data?.color;
   return (
     <div className="min-h-screen bg-gray-300 relative overflow-hidden flex items-center justify-center p-4">
       {/* Full Body Confetti - Multiple layers for complete coverage */}
@@ -30,10 +31,10 @@ export default function ThankYouPage() {
           <Confetti
             width={1850}
             height={927}
-            numberOfPieces={80} 
+            numberOfPieces={80}
             recycle={true}
-            gravity={0.1} 
-            initialVelocityY={8} 
+            gravity={0.1}
+            initialVelocityY={8}
             colors={[
               "#fbbf24",
               "#06b6d4",
@@ -61,7 +62,7 @@ export default function ThankYouPage() {
 
           {/* Second layer - Slow small rectangles */}
           <Confetti
-          width={1850}
+            width={1850}
             height={927}
             numberOfPieces={100}
             recycle={true}
@@ -87,7 +88,7 @@ export default function ThankYouPage() {
 
           {/* Third layer - Slow tiny dots */}
           <Confetti
-       width={1850}
+            width={1850}
             height={927}
             numberOfPieces={120}
             recycle={true}
@@ -125,7 +126,7 @@ export default function ThankYouPage() {
         style={{ transform: "rotate(300deg)", zIndex: 50 }}
       >
         <Image
-          src={catImage1 ||'/openeye.png'}
+          src={catImage1 || "/openeye.png"}
           alt=""
           fill
           className="object-cover"
@@ -139,7 +140,7 @@ export default function ThankYouPage() {
           style={{ transform: "rotate(-40deg)" }}
         >
           <Image
-                  src={catImage2 ||'/openeye.png'}
+            src={catImage2 || "/openeye.png"}
             alt=""
             fill
             className="object-cover"
@@ -164,16 +165,37 @@ export default function ThankYouPage() {
               </svg>
             </div>
           </div>
-
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 md:mb-4">
             Thank You for Sharing!
           </h1>
-
           <p className="text-base md:text-lg text-gray-700 mb-6 md:mb-8">
             Your child&apos;s moment is being reviewed — it may appear live on
             the big screen soon!
           </p>
-          <Link href={`https://www.livefromsnacktime.com/`}>Click Here</Link>
+      
+          <div className="flex justify-center  items-center gap-3 my-2 s p-2 ">
+            <Image
+              src={"/insta.svg"}
+              alt="insta"
+              width={24}
+              height={24}
+              className="object-cover w-[24px] h-[24px] cursor-pointer"
+            />
+            <p className="text-[16px]">
+              <Link
+              target="_blank"
+              rel="noopener noreferrer"
+                style={{
+                  color: color,
+                  border:color
+                }}
+                className="border-b-2 pb-1"
+                href={"https://www.livefromsnacktime.com/"}
+              >
+                @LiveFromSnackTime
+              </Link>
+            </p>
+          </div>
           <button
             onClick={() => router.push("/display")}
             className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover cursor-pointer text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
