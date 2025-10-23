@@ -4,6 +4,7 @@ import Image from "next/image";
 import { QRCodeGenerator } from "@/components/qr-code";
 import { useThem } from "@/hooks";
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 export default function HomePage() {
   const { data } = useThem();
@@ -14,6 +15,7 @@ export default function HomePage() {
   const catImage2 = data?.data?.catImage?.[1];
   const heroImage = data?.data?.heroImage;
   const bgColor = data?.data?.backgroundColor;
+  const color= data?.data?.color;
 
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
@@ -148,6 +150,7 @@ useEffect(() => {
               <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
                 Share your show day magic by Scanning Here!
               </p>
+  
 
               {/* <Link
                 href="/submit"
@@ -165,6 +168,13 @@ useEffect(() => {
                   className="object-cover"
                 />
               </div>
+            </div>
+            <div className="flex justify-between items-center gap-3 mt-4 shadow-xl p-2 rounded-xl bg-white">
+
+              <Image src={'/insta.svg'}  alt="insta" width={24} height={24} className="object-cover w-[24px] h-[24px] cursor-pointer"/>
+              <p className="text-[14px]">Check out <Link style={{
+                color:color
+              }} className="" href={'https://www.livefromsnacktime.com/'}>@LiveFromSnackTime</Link> for more quotes!</p>
             </div>
           </div>
         </div>
