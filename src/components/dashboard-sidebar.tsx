@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Settings, LogOut } from "lucide-react";
+import { LayoutGrid, Settings, LogOut, Proportions } from "lucide-react";
 import { cn } from "@/lib/utils";
 // import { setStoredUser } from "@/lib/auth";
 import {
@@ -46,7 +46,7 @@ export function DashboardSidebar() {
     {
       href: "/dashboard/display",
       label: "Display",
-      icon: LayoutGrid,
+      icon: Proportions,
     },
     {
       href: "/dashboard/settings",

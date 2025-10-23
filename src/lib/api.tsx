@@ -1,7 +1,7 @@
 import axios from "axios";
 
 import { getSession } from "next-auth/react";
-import { Cagliostro } from "next/font/google";
+// import { Cagliostro } from "next/font/google";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
