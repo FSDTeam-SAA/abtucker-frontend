@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
 import { useSideText, useThem } from "@/hooks";
+import Link from "next/link";
 // import { image } from "@/lib/fackdata";
 
 export default function SubmitPage() {
@@ -24,14 +25,14 @@ export default function SubmitPage() {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const { data } = useThem();
-  // quistion text or side image fetch 
-   const {data:sidebarImage}=useSideText()
-    console.log('1 what is the problem',sidebarImage?.question)
+  // quistion text or side image fetch
+  const { data: sidebarImage } = useSideText();
+  console.log("1 what is the problem", sidebarImage?.question);
   const logo = data?.data?.logo;
-  console.log(data?.data)
+  console.log(data?.data);
   //  const catImage1=data?.data.catImage[0];
-  const catImage2=data?.data.catImage[1]
-
+  const catImage2 = data?.data.catImage[1];
+  const color = data?.data?.color;
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
@@ -83,8 +84,7 @@ export default function SubmitPage() {
   const isFormValid =
     formData.childName && formData.quote && formData.photos && agreed;
 
-
-    console.log('100',catImage2)
+  console.log("100", catImage2);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -96,7 +96,7 @@ export default function SubmitPage() {
         }}
       >
         <Image
-          src={catImage2||"/formbottom.png"}
+          src={catImage2 || "/formbottom.png"}
           alt="bottom"
           fill
           className="object-cover w-full h-full"
@@ -118,10 +118,42 @@ export default function SubmitPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-3 md:mb-4 text-center text-balance px-4">
           Fill out a quick submission form
         </h1>
-        <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center max-w-3xl text-balance px-4">
+        <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center  text-balance px-4 md:px-0">
           Send us your funniest kid quotes, photos, and moments to display live
-          on the big screen! We may feature quotes on the @livefromsnacktime
-          Instagram, Facebook and X accounts!&rdquo;
+          on the big screen! We may feature quotes on the{" "}
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://www.livefromsnacktime.com/"}
+          >
+            @livefromsnacktime
+          </Link>{" "}
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://www.instagram.com/livefromsnacktime/#"}
+          >
+            Instagram
+          </Link>{" "}
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://www.facebook.com/livefromsnacktime/"}
+          >
+            Facebook
+          </Link>{" "}
+          , and{" "}
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://x.com/LiveFromSnackTi"}
+          >
+            X accounts!&rdquo;
+          </Link>
         </p>
 
         <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative z-40">
@@ -178,7 +210,7 @@ export default function SubmitPage() {
 
               <div>
                 <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
-                 {sidebarImage?.question}
+                  {sidebarImage?.question}
                 </label>
                 <textarea
                   value={formData.quote}
