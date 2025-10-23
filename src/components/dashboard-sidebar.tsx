@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutGrid, Settings, LogOut } from "lucide-react";
+import { LayoutGrid, Settings, LogOut, Proportions } from "lucide-react";
 import { cn } from "@/lib/utils";
 // import { setStoredUser } from "@/lib/auth";
 import {
@@ -26,22 +26,27 @@ export function DashboardSidebar() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
-  console.log('data them',data?.data?.catImage)
-const handleLogout = async () => {
-  try {
-    await signOut({
-      redirect: true,
-      callbackUrl: "/login",
-    });
-  } catch (error) {
-    console.error("Logout failed:", error);
-  }
-};
+  console.log("data them", data?.data?.catImage);
+  const handleLogout = async () => {
+    try {
+      await signOut({
+        redirect: true,
+        callbackUrl: "/login",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
+  };
   const navItems = [
     {
       href: "/dashboard",
       label: "Answer's Submissions",
       icon: LayoutGrid,
+    },
+    {
+      href: "/dashboard/display",
+      label: "Display",
+      icon: Proportions,
     },
     {
       href: "/dashboard/settings",
@@ -50,24 +55,22 @@ const handleLogout = async () => {
     },
   ];
 
-  const color= data?.data?.color
+  const color = data?.data?.color;
 
   return (
     <>
       <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6">
-        
-            <div className="mt-[40px] flex justify-center">
-              <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
-                <Image
-                  src={logo || `/logo.png`}
-                  alt="logo"
-                  width={80}
-                  height={80}
-                />
-              </div>
+          <div className="mt-[40px] flex justify-center">
+            <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
+              <Image
+                src={logo || `/logo.png`}
+                alt="logo"
+                width={80}
+                height={80}
+              />
             </div>
-          
+          </div>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -76,16 +79,14 @@ const handleLogout = async () => {
             const isActive = pathname === item.href;
             return (
               <Link
-              style={{
-                backgroundColor: isActive ? color : undefined
-              }}
+                style={{
+                  backgroundColor: isActive ? color : undefined,
+                }}
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                  isActive
-                    ? " text-white"
-                    : "text-gray-700 hover:bg-gray-100"
+                  isActive ? " text-white" : "text-gray-700 hover:bg-gray-100"
                 )}
               >
                 <Icon className="h-5 w-5" />

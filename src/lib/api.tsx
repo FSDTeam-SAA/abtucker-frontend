@@ -1,6 +1,7 @@
 import axios from "axios";
 
 import { getSession } from "next-auth/react";
+// import { Cagliostro } from "next/font/google";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -25,7 +26,7 @@ api.interceptors.request.use(
 
 export async function resetPassword(email: string) {
   try {
-    const res = api.post(`auth/forgot-password`,{email:email} );
+    const res = api.post(`auth/forgot-password`, { email: email });
     return res;
   } catch (error) {
     console.log(error);
@@ -85,16 +86,16 @@ export async function createPassword(token: string, newPassword: string) {
   }
 }
 
-
 // them update
 export async function themChange(data: FormData) {
   try {
     const res = await api.post(`theme`, data);
     return res.data;
   } catch (error) {
-    console.log('sorry for the error',error);
+    console.log("sorry for the error", error);
   }
 }
+
 // export async function themChange(data: FormData) {
 //   try {
 //     const res = await fetch('theme', { // Adjust the endpoint as needed
@@ -159,6 +160,33 @@ export async function them() {
   } catch (error) {
     if (error instanceof Error) {
       console.log(error);
+    }
+  }
+}
+
+// update display sidebar and text
+export async function changeImageText(data: FormData) {
+  try {
+    const res = await api.patch(`display`, data);
+    return res.data;
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
+    } else {
+      throw new Error(
+        "An unexpected error occurred while updating the display."
+      );
+    }
+  }
+}
+
+export async function imageText() {
+  try {
+    const res = await api.get(`display`);
+    return res.data;
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(error.message);
     }
   }
 }

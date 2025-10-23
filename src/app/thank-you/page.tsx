@@ -10,7 +10,7 @@ import { useThem } from "@/hooks";
 export default function ThankYouPage() {
   const router = useRouter();
   const [showConfetti, setShowConfetti] = useState(true);
-  const { width, height } = useWindowSize();
+  // const { width, height } = useWindowSize();
   const { data } = useThem();
 
   useEffect(() => {
@@ -27,12 +27,12 @@ export default function ThankYouPage() {
         <>
           {/* Base layer - Slow & Small confetti */}
           <Confetti
-            width={width}
-            height={height}
-            numberOfPieces={80} // Reduced for slower feel
+            width={1850}
+            height={927}
+            numberOfPieces={80} 
             recycle={true}
-            gravity={0.1} // Slower fall
-            initialVelocityY={8} // Slower start
+            gravity={0.1} 
+            initialVelocityY={8} 
             colors={[
               "#fbbf24",
               "#06b6d4",
@@ -44,7 +44,7 @@ export default function ThankYouPage() {
             drawShape={(ctx) => {
               // Small circles
               ctx.beginPath();
-              ctx.arc(0, 0, 1.5, 0, 2 * Math.PI); // Even smaller radius
+              ctx.arc(0, 5, 1.5, 0, 2 * Math.PI); // Even smaller radius
               ctx.fill();
             }}
             style={{
@@ -60,8 +60,8 @@ export default function ThankYouPage() {
 
           {/* Second layer - Slow small rectangles */}
           <Confetti
-            width={width}
-            height={height}
+          width={1850}
+            height={927}
             numberOfPieces={100}
             recycle={true}
             gravity={0.08} // Even slower
@@ -86,8 +86,8 @@ export default function ThankYouPage() {
 
           {/* Third layer - Slow tiny dots */}
           <Confetti
-            width={width}
-            height={height}
+       width={1850}
+            height={927}
             numberOfPieces={120}
             recycle={true}
             gravity={0.06} // Slowest

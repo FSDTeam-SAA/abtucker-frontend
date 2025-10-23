@@ -7,7 +7,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Submission } from "@/lib/api";
 import { Child } from "@/types/submition";
 // import { image } from "@/lib/fackdata";
-import { useThem } from "@/hooks";
+import { useSideText, useThem } from "@/hooks";
 import Loader from "@/components/Loader";
 
 interface Moment {
@@ -45,6 +45,8 @@ export default function DisplayPage() {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { data: them } = useThem();
+  const {data:sidebarImage}=useSideText()
+  // console.log('1 what is the problem',sidebarImage?.sideImage)
 
   const {
     data: datas,
@@ -54,7 +56,7 @@ export default function DisplayPage() {
     queryKey: ["submission"],
     queryFn: Submission,
   });
-  console.log("data", datas);
+  // console.log("data", datas);
   const data = datas?.filter((item: Child) => item.status === "active");
   useEffect(() => {
     if (data && Array.isArray(data)) {
@@ -131,11 +133,11 @@ export default function DisplayPage() {
   //   );
   // }
   const bgColor = them?.data?.backgroundColor;
-  console.log(bgColor, "fghjk");
+  // console.log(bgColor, "fghjk");
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
     : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
-  console.log(gradient, "5");
+  // console.log(gradient, "5");
 
   const catsImage = them?.data?.catImage[0];
   return (
@@ -157,7 +159,7 @@ export default function DisplayPage() {
           style={{ transform: "rotate(0deg)" }}
         >
           <Image
-            src="/leftside.png"
+            src={sidebarImage?.sideImage||"/leftside.png"}
             alt="left"
             width={1000}
             height={1000}
@@ -170,7 +172,7 @@ export default function DisplayPage() {
           style={{ transform: "rotate(180deg)" }}
         >
           <Image
-            src="/leftside.png"
+            src={sidebarImage?.sideImage||"/leftside.png"}
             alt="right"
             width={1000}
             height={1000}
