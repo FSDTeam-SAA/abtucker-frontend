@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
-import { useThem } from "@/hooks";
+import { useSideText, useThem } from "@/hooks";
 // import { image } from "@/lib/fackdata";
 
 export default function SubmitPage() {
@@ -24,10 +24,14 @@ export default function SubmitPage() {
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const { data } = useThem();
+  // quistion text or side image fetch 
+   const {data:sidebarImage}=useSideText()
+    console.log('1 what is the problem',sidebarImage?.question)
   const logo = data?.data?.logo;
   console.log(data?.data)
   //  const catImage1=data?.data.catImage[0];
   const catImage2=data?.data.catImage[1]
+
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
@@ -174,8 +178,7 @@ export default function SubmitPage() {
 
               <div>
                 <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
-                  What did your child say, before/during/after the show that
-                  made you laugh or smile?
+                 {sidebarImage?.question}
                 </label>
                 <textarea
                   value={formData.quote}
