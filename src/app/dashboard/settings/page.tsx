@@ -10,7 +10,7 @@ import { useThem } from "@/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { themChange } from "@/lib/api";
 import { toast } from "sonner";
-// import { useSession } from "next-auth/react";
+
 import DashboardHeader from "@/components/dashboard-header";
 
 interface ExtendedTheme {
@@ -25,114 +25,169 @@ interface ExtendedTheme {
 // Constants
 const DEFAULT_COLORS = {
   primary: "#a855f7",
-  backgrounds: ["#ffffff", "#f3f4f6", "#e5e7eb", "#d1d5db"]
+  backgrounds: ["#ffffff", "#f3f4f6", "#e5e7eb", "#d1d5db"],
 };
-
-// const FILE_VALIDATION = {
-//   maxSize: 5 * 1024 * 1024,
-//   types: ["image/"]
-// } as const;
 
 // Custom hooks
 const useThemeState = (theme: ExtendedTheme) => {
+  const { data: themData } = useThem();
+  console.log('them data ',themData);
+  
+  // Use default values when data is missing or undefined
+  const backgroundColors1 = themData?.data?.backgroundColor?.[0] || DEFAULT_COLORS.backgrounds[0];
+  const backgroundColors2 = themData?.data?.backgroundColor?.[1] || DEFAULT_COLORS.backgrounds[1];
+  const backgroundColors3 = themData?.data?.backgroundColor?.[2] || DEFAULT_COLORS.backgrounds[2];
+  const backgroundColors4 = themData?.data?.backgroundColor?.[3] || DEFAULT_COLORS.backgrounds[3];
+  
+  // For cat images, use null if not present (so uploader shows empty)
+  const catImage1 = themData?.data?.catImage?.[0] || null;
+  const catImage2 = themData?.data?.catImage?.[1] || null;
+  
+  const colors = themData?.data?.color || DEFAULT_COLORS.primary;
+  const heroImage = themData?.data?.heroImage || null;
+  const logo = themData?.data?.logo || null;
+
   const [color, setColor] = useState<string>(DEFAULT_COLORS.primary);
-  const [backgroundColors, setBackgroundColors] = useState<string[]>([...DEFAULT_COLORS.backgrounds]);
+  const [backgroundColors, setBackgroundColors] = useState<string[]>([
+    ...DEFAULT_COLORS.backgrounds,
+  ]);
   const [imagePreviews, setImagePreviews] = useState({
     logo: null as string | null,
     heroImage: null as string | null,
-    catImages: [null, null] as (string | null)[]
+    catImages: [null, null] as (string | null)[],
   });
   const [files, setFiles] = useState({
     logo: null as File | null,
     heroImage: null as File | null,
-    catImages: [null, null] as (File | null)[]
+    catImages: [null, null] as (File | null)[],
   });
 
-  // Initialize state from theme
+  // Initialize state from theme with proper default handling
   useEffect(() => {
     const extended = theme as ExtendedTheme;
-    
+
+    // Set color with default fallback
     setColor(
-      (Array.isArray(extended.colors) ? extended.colors[0] : extended.colors) || DEFAULT_COLORS.primary
+      (Array.isArray(extended.colors) ? extended.colors[0] : extended.colors) ||
+        colors ||
+        DEFAULT_COLORS.primary
     );
 
+    // Handle background colors with proper defaults
     const themeBackgrounds = extended.backgroundColors || extended.backgroundColor;
-    // Ensure we always have exactly 4 background colors
     if (themeBackgrounds?.length) {
-      const colors = [...themeBackgrounds];
-      // Pad with defaults if less than 4
-      while (colors.length < 4) {
-        colors.push(DEFAULT_COLORS.backgrounds[colors.length]);
-      }
-      setBackgroundColors(colors.slice(0, 4));
+      const colors = [
+        themeBackgrounds[0] || DEFAULT_COLORS.backgrounds[0],
+        themeBackgrounds[1] || DEFAULT_COLORS.backgrounds[1],
+        themeBackgrounds[2] || DEFAULT_COLORS.backgrounds[2],
+        themeBackgrounds[3] || DEFAULT_COLORS.backgrounds[3],
+      ];
+      setBackgroundColors(colors);
     } else {
-      setBackgroundColors([...DEFAULT_COLORS.backgrounds]);
+      // Use the individual color values we extracted above
+      setBackgroundColors([
+        backgroundColors1,
+        backgroundColors2,
+        backgroundColors3,
+        backgroundColors4,
+      ]);
     }
 
+    // Set image previews with proper null handling
     setImagePreviews({
-      logo: extended.logo || null,
-      heroImage: extended.heroImage || null,
-      catImages: extended.catImage || [null, null]
+      logo: extended.logo || logo || null,
+      heroImage: extended.heroImage || heroImage || null,
+      catImages: [
+        extended.catImage?.[0] || catImage1 || null,
+        extended.catImage?.[1] || catImage2 || null,
+      ],
     });
-  }, [theme]);
+  }, [theme, themData]);
 
-  const updateBackgroundColor = useCallback((index: number, newColor: string) => {
-    setBackgroundColors(prev => {
-      const newColors = [...prev];
-      newColors[index] = newColor;
-      return newColors;
-    });
-  }, []);
+  const updateBackgroundColor = useCallback(
+    (index: number, newColor: string) => {
+      setBackgroundColors((prev) => {
+        const newColors = [...prev];
+        newColors[index] = newColor;
+        return newColors;
+      });
+    },
+    []
+  );
 
-  const updateImage = useCallback((type: 'logo' | 'heroImage' | 'catImages', file: File | null, preview: string | null, index?: number) => {
-    if (type === 'catImages' && index !== undefined) {
-      setImagePreviews(prev => ({
-        ...prev,
-        catImages: prev.catImages.map((img, i) => i === index ? preview : img)
-      }));
-      setFiles(prev => ({
-        ...prev,
-        catImages: prev.catImages.map((f, i) => i === index ? file : f)
-      }));
-    } else {
-      setImagePreviews(prev => ({ ...prev, [type]: preview }));
-      setFiles(prev => ({ ...prev, [type]: file }));
-    }
-  }, []);
+  const updateImage = useCallback(
+    (
+      type: "logo" | "heroImage" | "catImages",
+      file: File | null,
+      preview: string | null,
+      index?: number
+    ) => {
+      if (type === "catImages" && index !== undefined) {
+        setImagePreviews((prev) => ({
+          ...prev,
+          catImages: prev.catImages.map((img, i) =>
+            i === index ? preview : img
+          ),
+        }));
+        setFiles((prev) => ({
+          ...prev,
+          catImages: prev.catImages.map((f, i) => (i === index ? file : f)),
+        }));
+      } else {
+        setImagePreviews((prev) => ({ ...prev, [type]: preview }));
+        setFiles((prev) => ({ ...prev, [type]: file }));
+      }
+    },
+    []
+  );
 
-  const deleteImage = useCallback((type: 'logo' | 'heroImage' | 'catImages', index?: number) => {
-    updateImage(type, null, null, index);
-  }, [updateImage]);
+  const deleteImage = useCallback(
+    (type: "logo" | "heroImage" | "catImages", index?: number) => {
+      updateImage(type, null, null, index);
+    },
+    [updateImage]
+  );
 
   const resetState = useCallback((newTheme: ExtendedTheme) => {
     const extended = newTheme;
-    
+
     setColor(
-      (Array.isArray(extended.colors) ? extended.colors[0] : extended.colors) || DEFAULT_COLORS.primary
+      (Array.isArray(extended.colors) ? extended.colors[0] : extended.colors) ||
+        colors ||
+        DEFAULT_COLORS.primary
     );
 
     const themeBackgrounds = extended.backgroundColors || extended.backgroundColor;
-    // Ensure we always have exactly 4 background colors
     if (themeBackgrounds?.length) {
-      const colors = [...themeBackgrounds];
-      while (colors.length < 4) {
-        colors.push(DEFAULT_COLORS.backgrounds[colors.length]);
-      }
-      setBackgroundColors(colors.slice(0, 4));
+      const colors = [
+        themeBackgrounds[0] || DEFAULT_COLORS.backgrounds[0],
+        themeBackgrounds[1] || DEFAULT_COLORS.backgrounds[1],
+        themeBackgrounds[2] || DEFAULT_COLORS.backgrounds[2],
+        themeBackgrounds[3] || DEFAULT_COLORS.backgrounds[3],
+      ];
+      setBackgroundColors(colors);
     } else {
-      setBackgroundColors([...DEFAULT_COLORS.backgrounds]);
+      setBackgroundColors([
+        backgroundColors1,
+        backgroundColors2,
+        backgroundColors3,
+        backgroundColors4,
+      ]);
     }
 
     setImagePreviews({
-      logo: extended.logo || null,
-      heroImage: extended.heroImage || null,
-      catImages: extended.catImage || [null, null]
+      logo: extended.logo || logo || null,
+      heroImage: extended.heroImage || heroImage || null,
+      catImages: [
+        extended.catImage?.[0] || catImage1 || null,
+        extended.catImage?.[1] || catImage2 || null,
+      ],
     });
 
     setFiles({
       logo: null,
       heroImage: null,
-      catImages: [null, null]
+      catImages: [null, null],
     });
   }, []);
 
@@ -145,7 +200,7 @@ const useThemeState = (theme: ExtendedTheme) => {
     files,
     updateImage,
     deleteImage,
-    resetState
+    resetState,
   };
 };
 
@@ -197,27 +252,30 @@ const ImageUploader: React.FC<{
   accept?: string;
   aspectRatio?: string;
   showEditButton?: boolean;
-}> = ({ label, preview, onUpload, onDelete, accept = "image/*", aspectRatio = "aspect-auto", showEditButton = false }) => (
+}> = ({
+  label,
+  preview,
+  onUpload,
+  onDelete,
+  accept = "image/*",
+  aspectRatio = "aspect-auto",
+  showEditButton = false,
+}) => (
   <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors">
     <input
       type="file"
-      id={`${label.toLowerCase().replace(/\s+/g, '-')}-upload`}
+      id={`${label.toLowerCase().replace(/\s+/g, "-")}-upload`}
       accept={accept}
       onChange={onUpload}
       className="hidden"
     />
     <label
-      htmlFor={`${label.toLowerCase().replace(/\s+/g, '-')}-upload`}
+      htmlFor={`${label.toLowerCase().replace(/\s+/g, "-")}-upload`}
       className="cursor-pointer block"
     >
       <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
       <p className="text-gray-600 text-sm mb-2">Upload {label.toLowerCase()}</p>
-      {/* <button
-        type="button"
-        className="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-primary text-white hover:bg-primary-hover text-sm"
-      >
-        +
-      </button> */}
+     
     </label>
     {preview && (
       <div className="mt-4 relative">
@@ -232,7 +290,13 @@ const ImageUploader: React.FC<{
           {showEditButton && (
             <button
               type="button"
-              onClick={() => document.getElementById(`${label.toLowerCase().replace(/\s+/g, '-')}-upload`)?.click()}
+              onClick={() =>
+                document
+                  .getElementById(
+                    `${label.toLowerCase().replace(/\s+/g, "-")}-upload`
+                  )
+                  ?.click()
+              }
               className="p-1 rounded-full bg-primary text-white hover:bg-primary-hover"
             >
               <Edit2 className="h-4 w-4" />
@@ -266,20 +330,25 @@ export default function SettingsPage() {
     files,
     updateImage,
     deleteImage,
-    resetState
+    resetState,
   } = useThemeState(theme);
 
   const { validateFile, readFileAsDataURL } = useFileHandler();
   const [hasChanges, setHasChanges] = useState(false);
 
   // Memoized theme data for API call
-  const themeData = useMemo(() => ({
-    colors: [color],
-    backgroundColors,
-    logo: imagePreviews.logo || undefined,
-    heroImage: imagePreviews.heroImage || undefined,
-    catImage: imagePreviews.catImages.filter((img): img is string => img !== null),
-  }), [color, backgroundColors, imagePreviews]);
+  const themeData = useMemo(
+    () => ({
+      colors: [color],
+      backgroundColors,
+      logo: imagePreviews.logo || undefined,
+      heroImage: imagePreviews.heroImage || undefined,
+      catImage: imagePreviews.catImages.filter(
+        (img): img is string => img !== null
+      ),
+    }),
+    [color, backgroundColors, imagePreviews]
+  );
 
   const themMutation = useMutation({
     mutationFn: (formData: FormData) => themChange(formData),
@@ -287,7 +356,7 @@ export default function SettingsPage() {
     onSuccess: (response) => {
       toast.success(response.message || "Theme updated successfully");
       queryClient.invalidateQueries({ queryKey: ["them"] });
-      
+
       if (response.success) {
         updateTheme(themeData);
         setHasChanges(false);
@@ -296,60 +365,66 @@ export default function SettingsPage() {
     },
     onError: (err: Error) => {
       console.error("Failed to update theme:", err);
-      const errorMessage = (
-        err as { response?: { data?: { message?: string } } }
-      )?.response?.data?.message || err.message || "Failed to update theme";
+      const errorMessage =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        err.message ||
+        "Failed to update theme";
       toast.error(errorMessage);
     },
   });
 
   // File upload handlers
-  const createFileUploadHandler = useCallback((type: 'logo' | 'heroImage' | 'catImages', index?: number) => 
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+  const createFileUploadHandler = useCallback(
+    (type: "logo" | "heroImage" | "catImages", index?: number) =>
+      async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-      if (!validateFile(file)) return;
+        if (!validateFile(file)) return;
 
-      try {
-        const preview = await readFileAsDataURL(file);
-        updateImage(type, file, preview, index);
-        setHasChanges(true);
-      } catch {
-        toast.error("Failed to read file");
-      }
-    },
+        try {
+          const preview = await readFileAsDataURL(file);
+          updateImage(type, file, preview, index);
+          setHasChanges(true);
+        } catch {
+          toast.error("Failed to read file");
+        }
+      },
     [validateFile, readFileAsDataURL, updateImage]
   );
 
-  const handleSave = useCallback(async (
-    e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
-  ) => {
-    e.preventDefault();
+  const handleSave = useCallback(
+    async (
+      e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>
+    ) => {
+      e.preventDefault();
 
-    try {
-      const formData = new FormData();
-      
-      // Append colors
-      formData.append("color", color);
-      backgroundColors.forEach(bgColor => {
-        formData.append("backgroundColor", bgColor);
-      });
+      try {
+        const formData = new FormData();
 
-      // Append files if they exist
-      if (files.logo) formData.append("logo", files.logo);
-      if (files.heroImage) formData.append("heroImage", files.heroImage);
-      
-      files.catImages.forEach(file => {
-        if (file) formData.append("catImage", file);
-      });
+        // Append colors
+        formData.append("color", color);
+        backgroundColors.forEach((bgColor) => {
+          formData.append("backgroundColor", bgColor);
+        });
 
-      await themMutation.mutateAsync(formData);
-    } catch (err) {
-      console.error("Save error:", err);
-      toast.error("An error occurred while saving");
-    }
-  }, [color, backgroundColors, files, themMutation]);
+        // Append files if they exist
+        if (files.logo) formData.append("logo", files.logo);
+        if (files.heroImage) formData.append("heroImage", files.heroImage);
+
+        files.catImages.forEach((file) => {
+          if (file) formData.append("catImage", file);
+        });
+
+        await themMutation.mutateAsync(formData);
+      } catch (err) {
+        console.error("Save error:", err);
+        toast.error("An error occurred while saving");
+      }
+    },
+    [color, backgroundColors, files, themMutation]
+  );
 
   const handleCancel = useCallback(() => {
     resetState(theme);
@@ -359,15 +434,26 @@ export default function SettingsPage() {
   // Effect to track changes
   useEffect(() => {
     const currentTheme = theme as ExtendedTheme;
-    const hasColorChanged = color !== ((Array.isArray(currentTheme.colors) ? currentTheme.colors[0] : currentTheme.colors) || DEFAULT_COLORS.primary);
-    
-    const currentBackgrounds = currentTheme.backgroundColors || currentTheme.backgroundColor || DEFAULT_COLORS.backgrounds;
-    const hasBackgroundsChanged = backgroundColors.some((bg, i) => bg !== (currentBackgrounds[i] || DEFAULT_COLORS.backgrounds[i]));
-    
-    const hasImagesChanged = 
+    const hasColorChanged =
+      color !==
+      ((Array.isArray(currentTheme.colors)
+        ? currentTheme.colors[0]
+        : currentTheme.colors) || DEFAULT_COLORS.primary);
+
+    const currentBackgrounds =
+      currentTheme.backgroundColors ||
+      currentTheme.backgroundColor ||
+      DEFAULT_COLORS.backgrounds;
+    const hasBackgroundsChanged = backgroundColors.some(
+      (bg, i) => bg !== (currentBackgrounds[i] || DEFAULT_COLORS.backgrounds[i])
+    );
+
+    const hasImagesChanged =
       imagePreviews.logo !== currentTheme.logo ||
       imagePreviews.heroImage !== currentTheme.heroImage ||
-      imagePreviews.catImages.some((img, i) => img !== (currentTheme.catImage?.[i] || null));
+      imagePreviews.catImages.some(
+        (img, i) => img !== (currentTheme.catImage?.[i] || null)
+      );
 
     setHasChanges(hasColorChanged || hasBackgroundsChanged || hasImagesChanged);
   }, [color, backgroundColors, imagePreviews, theme]);
@@ -384,7 +470,8 @@ export default function SettingsPage() {
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Settings</h1>
             <p className="text-gray-600">
-              Welcome back! Here&apos;s what&apos;s happening with your app today.
+              Welcome back! Here&apos;s what&apos;s happening with your app
+              today.
             </p>
           </div>
           <DashboardHeader />
@@ -400,7 +487,10 @@ export default function SettingsPage() {
             </h2>
             <div className="flex items-center gap-6">
               <div className="flex flex-col gap-2">
-                <label htmlFor="primary-color-picker" className="text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="primary-color-picker"
+                  className="text-sm font-medium text-gray-700"
+                >
                   Select Color
                 </label>
                 <input
@@ -415,14 +505,18 @@ export default function SettingsPage() {
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-sm font-medium text-gray-700">Preview</span>
+                <span className="text-sm font-medium text-gray-700">
+                  Preview
+                </span>
                 <div
                   className="w-20 h-20 rounded-lg border-2 border-gray-200 flex items-center justify-center"
                   style={{ backgroundColor: color }}
                 >
                   <span className="text-white font-medium text-sm">Aa</span>
                 </div>
-                <div className="text-xs text-gray-500 text-center">{color.toUpperCase()}</div>
+                <div className="text-xs text-gray-500 text-center">
+                  {color.toUpperCase()}
+                </div>
               </div>
             </div>
           </div>
@@ -435,7 +529,9 @@ export default function SettingsPage() {
             <div className="grid grid-cols-4 gap-4">
               {backgroundColors.map((bgColor, index) => (
                 <div key={index} className="flex flex-col items-center gap-2">
-                  <label className="text-sm text-gray-600 font-medium">BG {index + 1}</label>
+                  <label className="text-sm text-gray-600 font-medium">
+                    BG {index + 1}
+                  </label>
                   <input
                     type="color"
                     value={bgColor}
@@ -445,7 +541,9 @@ export default function SettingsPage() {
                     }}
                     className="w-16 h-16 rounded cursor-pointer border-2 border-gray-300"
                   />
-                  <div className="text-xs text-gray-500 text-center break-all">{bgColor}</div>
+                  <div className="text-xs text-gray-500 text-center break-all">
+                    {bgColor}
+                  </div>
                 </div>
               ))}
             </div>
@@ -459,8 +557,8 @@ export default function SettingsPage() {
             <ImageUploader
               label="hero image"
               preview={imagePreviews.heroImage}
-              onUpload={createFileUploadHandler('heroImage')}
-              onDelete={() => deleteImage('heroImage')}
+              onUpload={createFileUploadHandler("heroImage")}
+              onDelete={() => deleteImage("heroImage")}
             />
           </div>
 
@@ -475,8 +573,8 @@ export default function SettingsPage() {
                   key={index}
                   label={`cat image ${index + 1}`}
                   preview={preview}
-                  onUpload={createFileUploadHandler('catImages', index)}
-                  onDelete={() => deleteImage('catImages', index)}
+                  onUpload={createFileUploadHandler("catImages", index)}
+                  onDelete={() => deleteImage("catImages", index)}
                   aspectRatio="aspect-square"
                 />
               ))}
@@ -491,8 +589,8 @@ export default function SettingsPage() {
             <ImageUploader
               label="logo"
               preview={imagePreviews.logo}
-              onUpload={createFileUploadHandler('logo')}
-              onDelete={() => deleteImage('logo')}
+              onUpload={createFileUploadHandler("logo")}
+              onDelete={() => deleteImage("logo")}
             />
           </div>
 
@@ -502,17 +600,17 @@ export default function SettingsPage() {
               variant="outline"
               onClick={handleCancel}
               disabled={!hasChanges || themMutation.isPending}
-              className="flex-1 bg-transparent"
+              className="flex-1 bg-transparent cursor-pointer"
             >
               Cancel
             </Button>
             <Button
-            style={{
-              backgroundColor: color
-            }}
+              style={{
+                backgroundColor: color,
+              }}
               onClick={handleSave}
               disabled={!hasChanges || themMutation.isPending}
-              className="flex-1 bg-primary hover:bg-primary-hover"
+              className="flex-1 bg-primary hover:bg-primary-hover cursor-pointer"
             >
               {themMutation.isPending ? "Saving..." : "Save Changes"}
             </Button>
@@ -524,11 +622,12 @@ export default function SettingsPage() {
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
             Logo Preview
           </h2>
-          <div style={
-            { 
-              borderColor: color
-            }
-          } className="relative aspect-square rounded-full border-4  overflow-hidden bg-white flex items-center justify-center">
+          <div
+            style={{
+              borderColor: color,
+            }}
+            className="relative aspect-square rounded-full border-4  overflow-hidden bg-white flex items-center justify-center"
+          >
             {imagePreviews.logo ? (
               <>
                 <Image
@@ -541,14 +640,16 @@ export default function SettingsPage() {
                 <div className="absolute top-4 right-4 flex gap-2">
                   <button
                     type="button"
-                    onClick={() => document.getElementById("logo-upload")?.click()}
+                    onClick={() =>
+                      document.getElementById("logo-upload")?.click()
+                    }
                     className="p-2 rounded-lg bg-primary text-white hover:bg-primary-hover"
                   >
                     <Edit2 className="h-5 w-5" />
                   </button>
                   <button
                     type="button"
-                    onClick={() => deleteImage('logo')}
+                    onClick={() => deleteImage("logo")}
                     className="p-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
                   >
                     <Trash2 className="h-5 w-5" />
