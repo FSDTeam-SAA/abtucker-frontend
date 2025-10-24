@@ -5,6 +5,7 @@ import { QRCodeGenerator } from "@/components/qr-code";
 import { useThem } from "@/hooks";
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { Instagram } from "lucide-react";
 
 export default function HomePage() {
   const { data } = useThem();
@@ -15,26 +16,25 @@ export default function HomePage() {
   const catImage2 = data?.data?.catImage?.[1];
   const heroImage = data?.data?.heroImage;
   const bgColor = data?.data?.backgroundColor;
-  const color= data?.data?.color;
+  const color = data?.data?.color;
 
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
     : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
 
   // Responsive QR code sizing
-useEffect(() => {
-  const handleResize = () => {
-    if (window.innerWidth >= 1600) setScanSize(350);
-    else if (window.innerWidth >= 1200) setScanSize(300);
-    else if (window.innerWidth >= 1024) setScanSize(250);
-    else if (window.innerWidth >= 768) setScanSize(250);
-    else setScanSize(180);
-  };
-  handleResize();
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
-
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1530) setScanSize(450);
+      else if (window.innerWidth >= 1200) setScanSize(350);
+      else if (window.innerWidth >= 1024) setScanSize(350);
+      else if (window.innerWidth >= 768) setScanSize(320);
+      else setScanSize(280);
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   return (
     <div
@@ -88,7 +88,7 @@ useEffect(() => {
       </div>
 
       {/* top right  */}
-      <div className=" lg:block absolute -top-12 -right-10 xl:-right-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[-140deg] z-30">
+      <div className=" lg:block absolute -top-12 -right-10 xl:-right-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[-120deg] z-30">
         <Image
           src={catImage2 || "/openeye.png"}
           alt="cat-decor-3"
@@ -101,13 +101,15 @@ useEffect(() => {
       <div className="relative z-10 container mx-auto px-6 sm:px-8 md:px-12 lg:px-20 xl:px-28 py-12 sm:py-16 lg:py-20">
         <div className="flex flex-col-reverse xl:flex-row items-center justify-between gap-12 lg:gap-20">
           {/* Left Section */}
-          <div className="w-full lg:w-2/3 flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="w-full xl:w-[64%] flex flex-col items-center lg:items-start text-center lg:text-left">
             <h1 className="text-[30px] sm:text-[40px] md:text-[50px] font-coiny text-[#343A40] leading-tight mb-4 sm:mb-6">
-              Share Your Favorite Moment!
+              Shear Your Favorite Moment!
             </h1>
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-[#343A40]  max-w-2xl">
-              Submit your child&apos;s funniest quotes or photos and see them
-              live on the big screen.
+            <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-[#343A40]  ">
+              {/* Submit your child&apos;s funniest quotes or photos and see them
+              live on the big screen. */}
+              Scan to submit your child&apos;s quotes and photos throughout the
+              show, they might be featured on the big screen !
             </p>
 
             <div className="w-full max-w-[720px] mx-auto">
@@ -122,7 +124,7 @@ useEffect(() => {
           </div>
 
           {/* Right Section */}
-          <div className="w-full xl:w-1/3 flex flex-col items-center gap-6">
+          <div className="w-full xl:w-[36%] flex flex-col items-center gap-6">
             {/* Logo */}
             <div className="w-28 sm:w-32 md:w-36">
               <Image
@@ -135,8 +137,8 @@ useEffect(() => {
             </div>
 
             {/* QR Card */}
-            <div className="relative bg-white rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-10 shadow-2xl w-full max-w-sm xl:max-w-md flex flex-col items-center text-center">
-              <div className="bg-white p-4 sm:p-6 rounded-xl  border-gray-200 mb-2">
+            <div className="relative bg-white rounded-2xl md:rounded-3xl pb-6 sm:pb-8 md:pb-10 shadow-2xl w-full max-w-sm xl:max-w-full flex flex-col items-center text-center">
+              <div className="bg-transparent rounded-2xl p-2 sm:p-2   mb-2">
                 <QRCodeGenerator
                   url={
                     typeof window !== "undefined"
@@ -147,10 +149,9 @@ useEffect(() => {
                 />
               </div>
 
-              <p className="text-base sm:text-lg md:text-xl font-semibold text-gray-900">
-                Share your show day magic by Scanning Here!
+              <p className="text-base sm:text-lg md:text-lg xl:text-xl w-[80%] text-center font-semibold text-gray-900">
+                share your show day magic by scanning here!
               </p>
-  
 
               {/* <Link
                 href="/submit"
@@ -170,11 +171,36 @@ useEffect(() => {
               </div>
             </div>
             <div className="flex justify-between items-center gap-3 mt-4 shadow-xl p-2 rounded-xl bg-white">
-
-              <Image src={'/insta.svg'}  alt="insta" width={24} height={24} className="object-cover w-[24px] h-[24px] cursor-pointer"/>
-              <p className="text-[14px]">Check out <Link style={{
-                color:color
-              }} className="" href={'https://www.livefromsnacktime.com/'}>@LiveFromSnackTime</Link> for more quotes!</p>
+              <Link
+                  style={{
+                    color: color,
+                  }}
+                  className=""
+                  href={"https://www.instagram.com/llvefromsnacktime/"}
+                >
+               
+              <Instagram className="w-6 h-6" />
+                </Link>
+              {/* <Image
+                src={"/insta.svg"}
+                alt="insta"
+                width={24}
+                height={24}
+                className="object-cover w-[24px] h-[24px] cursor-pointer"
+              /> */}
+              <p className="text-[14px]">
+                Check out{" "}
+                <Link
+                  style={{
+                    color: color,
+                  }}
+                  className=""
+                  href={"https://www.livefromsnacktime.com/"}
+                >
+                  @LiveFromSnackTime
+                </Link>{" "}
+                for more quotes!
+              </p>
             </div>
           </div>
         </div>
