@@ -21,6 +21,7 @@ export default function SubmitPage() {
     photos: null as File | null,
     serial: "123",
   });
+    const [isHovered, setIsHovered] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -121,39 +122,44 @@ export default function SubmitPage() {
         <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center  text-balance px-4 md:px-0">
           Send us your funniest kid quotes, photos, and moments to display live
           on the big screen! We may feature quotes on the{" "}
-          <Link
+          {/* <Link
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: color }}
             href={"https://www.livefromsnacktime.com/"}
-          >
-            @livefromsnacktime
-          </Link>{" "}
+            >
+            </Link>{" "} */}
+          @livefromsnacktime{" "}
           <Link
             target="_blank"
             rel="noopener noreferrer"
-            style={{ color: color }}
-            href={"https://www.instagram.com/livefromsnacktime/#"}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+              color: color,
+              borderBottom: `2px solid ${isHovered ? color : "transparent"}`,
+              paddingBottom: "4px",
+              transition: "border-color 0.3s ease",
+            }}
+            href={"https://www.instagram.com/llvefromsnacktime/"}
           >
             Instagram
           </Link>{" "}
-          <Link
+          {/* <Link
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: color }}
             href={"https://www.facebook.com/livefromsnacktime/"}
           >
-            Facebook
-          </Link>{" "}
-          , and{" "}
-          <Link
+          </Link>{" "} */}
+          Facebook , and{" "}
+          {/* <Link
             target="_blank"
             rel="noopener noreferrer"
             style={{ color: color }}
             href={"https://x.com/LiveFromSnackTi"}
-          >
-            X accounts!&rdquo;
-          </Link>
+          ></Link> */}
+          X accounts!&rdquo;
         </p>
 
         <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative z-40">
@@ -165,7 +171,7 @@ export default function SubmitPage() {
             <div className="space-y-4 md:space-y-6">
               <div>
                 <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
-                  Your child&apos;s name?
+                  Your child&apos;s first name?
                 </label>
                 <input
                   type="text"
