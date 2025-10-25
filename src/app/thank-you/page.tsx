@@ -198,7 +198,7 @@ export default function ThankYouPage() {
             </p>
           </div>
           <button
-            onClick={() => router.push("/display")}
+            onClick={() => router.push("/submit")}
             className="w-full py-3 md:py-4 bg-primary hover:bg-primary-hover cursor-pointer text-white font-bold text-lg md:text-xl rounded-xl md:rounded-2xl transition-colors shadow-lg"
           >
             Submit Another Moment
