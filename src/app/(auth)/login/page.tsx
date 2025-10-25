@@ -62,8 +62,7 @@ export default function LoginPage() {
                 Welcome!
               </h1>
               <p className="text-[#6C757D] leading-[150%] text-[16px] ">
-                Sign in to book, manage, or host your kitchen spaces
-                effortlessly.
+                Sign in to manage the submissions.
               </p>
             </div>
 

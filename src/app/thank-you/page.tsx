@@ -7,6 +7,7 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "react-use";
 import { useThem } from "@/hooks";
 import Link from "next/link";
+import { Instagram } from "lucide-react";
 
 export default function ThankYouPage() {
   const router = useRouter();
@@ -174,14 +175,14 @@ export default function ThankYouPage() {
           </p>
       
           <div className="flex justify-center  items-center gap-3 my-2 s p-2 ">
-            <Image
-              src={"/insta.svg"}
-              alt="insta"
-              width={24}
-              height={24}
-              className="object-cover w-[24px] h-[24px] cursor-pointer"
-            />
-            <p className="text-[16px]">
+            <Link className=" hover:scale-[105%]" style={{
+                  color: color,
+                 
+                }} href={'https://www.instagram.com/livefromsnacktime/'} target="_blank" rel="noopener noreferrer">
+            
+              <Instagram />
+            </Link>
+            <p className="text-[16px] hover:scale-[105%] ">
               <Link
               target="_blank"
               rel="noopener noreferrer"
@@ -189,8 +190,8 @@ export default function ThankYouPage() {
                   color: color,
                   border:color
                 }}
-                className="border-b-2 pb-1"
-                href={"https://www.livefromsnacktime.com/"}
+                className="border-b-2 pb-1 "
+                href={"https://www.instagram.com/livefromsnacktime/"}
               >
                 @LiveFromSnackTime
               </Link>

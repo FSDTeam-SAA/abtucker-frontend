@@ -141,7 +141,7 @@ export default function SubmitPage() {
               paddingBottom: "4px",
               transition: "border-color 0.3s ease",
             }}
-            href={"https://www.instagram.com/llvefromsnacktime/"}
+            href={"https://www.instagram.com/livefromsnacktime/"}
           >
             Instagram
           </Link>{" "}
