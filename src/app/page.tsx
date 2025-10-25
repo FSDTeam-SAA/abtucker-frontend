@@ -103,13 +103,13 @@ export default function HomePage() {
           {/* Left Section */}
           <div className="w-full xl:w-[64%] flex flex-col items-center lg:items-start text-center lg:text-left">
             <h1 className="text-[30px] sm:text-[40px] md:text-[50px] font-coiny text-[#343A40] leading-tight mb-4 sm:mb-6">
-              Shear Your Favorite Moment!
+              share your favorite moment!
             </h1>
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-[#343A40]  ">
               {/* Submit your child&apos;s funniest quotes or photos and see them
               live on the big screen. */}
               Scan to submit your child&apos;s quotes and photos throughout the
-              show, they might be featured on the big screen !
+              show, they might be featured on the big screen!
             </p>
 
             <div className="w-full max-w-[720px] mx-auto">
