@@ -15,13 +15,13 @@ export default function SubmitPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     childName: "",
-    age: 0,
+    age: null as number | null,
     email: "",
     quote: "",
     photos: null as File | null,
     serial: "123",
   });
-    const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -191,12 +191,18 @@ export default function SubmitPage() {
                 </label>
                 <input
                   type="number"
-                  value={formData.age}
+                  value={formData.age ?? ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, age: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      age: e.target.value === "" ? null : Number(e.target.value),
+                    })
                   }
                   placeholder="Your child age"
-                  className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
+                  className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg 
+  [&::-webkit-inner-spin-button]:appearance-none 
+  [&::-webkit-outer-spin-button]:appearance-none 
+  [appearance:textfield]"
                 />
               </div>
               <div>
@@ -209,7 +215,7 @@ export default function SubmitPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  placeholder="Your child age"
+                  placeholder="Your Email"
                   className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
                 />
               </div>

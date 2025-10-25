@@ -150,7 +150,7 @@ export default function HomePage() {
               </div>
 
               <p className="text-base sm:text-lg md:text-lg xl:text-xl w-[80%] text-center font-semibold text-gray-900">
-                share your show day magic by scanning here!
+                Share your show day magic by scanning here!
               </p>
 
               {/* <Link
@@ -176,7 +176,7 @@ export default function HomePage() {
                     color: color,
                   }}
                   className=""
-                  href={"https://www.instagram.com/llvefromsnacktime/"}
+                  href={"https://www.instagram.com/livefromsnacktime/"} target="_blank" rel="noopener noreferrer"
                 >
                
               <Instagram className="w-6 h-6" />
@@ -189,13 +189,13 @@ export default function HomePage() {
                 className="object-cover w-[24px] h-[24px] cursor-pointer"
               /> */}
               <p className="text-[14px]">
-                Check out{" "}
+                Follow{" "}
                 <Link
                   style={{
                     color: color,
                   }}
                   className=""
-                  href={"https://www.livefromsnacktime.com/"}
+                  href={"https://www.instagram.com/livefromsnacktime/"}
                 >
                   @LiveFromSnackTime
                 </Link>{" "}
