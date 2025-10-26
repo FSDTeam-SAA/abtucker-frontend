@@ -192,7 +192,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-3xl font-bold text-primary">
-              Answer&apos;s Submissions
+              Audience Submissions
             </h1>
             <p className="text-gray-600">
               Welcome back! Here&apos;s what&apos;s happening with your app
