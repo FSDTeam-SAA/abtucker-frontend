@@ -108,8 +108,9 @@ export default function HomePage() {
             <p className="text-base sm:text-lg md:text-xl lg:text-2xl font-semibold text-[#343A40]  ">
               {/* Submit your child&apos;s funniest quotes or photos and see them
               live on the big screen. */}
-              Scan to submit your child&apos;s quotes and photos throughout the
-              show, they might be featured on the big screen!
+              Scan to share your child&apos;s funny and heartwarming quotes and
+              photos throughout the show — they might be featured on the big
+              screen!
             </p>
 
             <div className="w-full max-w-[720px] mx-auto">
@@ -172,15 +173,16 @@ export default function HomePage() {
             </div>
             <div className="flex justify-between items-center gap-3 mt-4 shadow-xl p-2 rounded-xl bg-white">
               <Link
-                  style={{
-                    color: color,
-                  }}
-                  className=""
-                  href={"https://www.instagram.com/livefromsnacktime/"} target="_blank" rel="noopener noreferrer"
-                >
-               
-              <Instagram className="w-6 h-6" />
-                </Link>
+                style={{
+                  color: color,
+                }}
+                className=""
+                href={"https://www.instagram.com/livefromsnacktime/"}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Instagram className="w-6 h-6" />
+              </Link>
               {/* <Image
                 src={"/insta.svg"}
                 alt="insta"
