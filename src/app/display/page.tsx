@@ -92,7 +92,7 @@ export default function DisplayPage() {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % moments.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [moments.length]);
