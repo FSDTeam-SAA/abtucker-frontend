@@ -109,7 +109,7 @@ export default function HomePage() {
               {/* Submit your child&apos;s funniest quotes or photos and see them
               live on the big screen. */}
               Scan to share your child&apos;s funny and heartwarming quotes and
-              photos throughout the show — they might be featured on the big
+              photos throughout the show — they might be featured <br /> on the big
               screen!
             </p>
 
