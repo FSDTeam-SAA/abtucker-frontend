@@ -198,6 +198,7 @@ export default function HomePage() {
                   }}
                   className=""
                   href={"https://www.instagram.com/livefromsnacktime/"}
+                  target="_blank"
                 >
                   @LiveFromSnackTime
                 </Link>{" "}

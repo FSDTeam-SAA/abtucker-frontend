@@ -203,7 +203,7 @@ export default function DisplayPage() {
               }
               size={100}
             />
-            <p className="text-center text-xs">Scane Here!</p>
+            <p className="text-center text-xs">Scan Here!</p>
           </div>
         </div>
 
