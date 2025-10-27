@@ -63,12 +63,14 @@ export function DashboardSidebar() {
         <div className="p-6">
           <div className="mt-[40px] flex justify-center">
             <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
-              <Image
-                src={logo || `/logo.png`}
-                alt="logo"
-                width={80}
-                height={80}
-              />
+              <Link href={'/'}>
+                <Image
+                  src={logo || `/logo.png`}
+                  alt="logo"
+                  width={80}
+                  height={80}
+                />
+              </Link>
             </div>
           </div>
         </div>

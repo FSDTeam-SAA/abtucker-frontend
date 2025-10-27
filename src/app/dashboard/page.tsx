@@ -38,8 +38,8 @@ export default function DashboardPage() {
   // const { data: session } = useSession();
   const [open, setOpen] = React.useState(false);
   const [date, setDate] = React.useState<Date | undefined>(new Date());
-    const { data:them } = useThem();
-  
+  const { data: them } = useThem();
+
   // console.log(date, "hey date ");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
@@ -184,8 +184,7 @@ export default function DashboardPage() {
   const formate = dates.toUTCString().replace(" 00:45:23 GMT", "");
   console.log(formate);
 
-
-  const color= them?.data?.color
+  const color = them?.data?.color;
   return (
     <div className="p-8">
       <div className="mb-8">
@@ -256,6 +255,15 @@ export default function DashboardPage() {
             </div>
           </div>
 
+          <div className="flex items-center gap-4">
+          <Button
+            style={{ backgroundColor: color }}
+            className={` hover:bg-primary-hover text-white cursor-pointer`}
+          >
+            Go to Display
+          </Button>
+
+
           <Button
             style={{ backgroundColor: color }}
             onClick={handleBulkApprove}
@@ -263,6 +271,7 @@ export default function DashboardPage() {
           >
             Approve All ({filteredSubmissions?.length || 0})
           </Button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -273,8 +282,7 @@ export default function DashboardPage() {
                   Serial
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
-
-                   Email
+                  Email
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   User&apos;s Answer
@@ -290,8 +298,10 @@ export default function DashboardPage() {
                   <td className="px-6 py-4 text-sm text-gray-900">
                     #{submission.serial}
                   </td>
-                   <td className="px-6 py-4 text-sm text-gray-700">
-                    <div className="line-clamp-2">{submission.email ? submission.email :'NO Email'}</div>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    <div className="line-clamp-2">
+                      {submission.email ? submission.email : "NO Email"}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="line-clamp-2">{submission.quote}</div>
