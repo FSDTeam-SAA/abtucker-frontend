@@ -33,6 +33,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useThem } from "@/hooks";
+import Link from "next/link";
 
 export default function DashboardPage() {
   // const { data: session } = useSession();
@@ -256,12 +257,15 @@ export default function DashboardPage() {
           </div>
 
           <div className="flex items-center gap-4">
+            <Link href={'/display'}>
+            
           <Button
             style={{ backgroundColor: color }}
             className={` hover:bg-primary-hover text-white cursor-pointer`}
           >
             Go to Display
           </Button>
+            </Link>
 
 
           <Button
