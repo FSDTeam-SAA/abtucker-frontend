@@ -78,7 +78,7 @@ export default function HomePage() {
       </div>
 
       {/* bottom left  */}
-      <div className=" lg:block absolute -bottom-16 -left-12 xl:-left-20 w-36 xl:w-56 h-36 xl:h-56 rotate-[50deg] z-30">
+      <div className=" lg:block absolute -bottom-16 -left-12 xl:-left-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[50deg] z-30">
         <Image
           src={catImage1 || "/openeye.png"}
           alt="cat-decor-2"
@@ -109,8 +109,8 @@ export default function HomePage() {
               {/* Submit your child&apos;s funniest quotes or photos and see them
               live on the big screen. */}
               Scan to share your child&apos;s funny and heartwarming quotes and
-              photos throughout the show — they might be featured <br /> on the big
-              screen!
+              photos throughout the show — they might be featured <br /> on the
+              big screen!
             </p>
 
             <div className="w-full max-w-[720px] mx-auto">
@@ -127,19 +127,19 @@ export default function HomePage() {
           {/* Right Section */}
           <div className="w-full xl:w-[36%] flex flex-col items-center gap-6">
             {/* Logo */}
-            <div className="w-28 sm:w-32 md:w-36">
+            <div className="flex justify-center lg:justify-start w-auto h-[140px]">
               <Image
-                src={logo || "/logo.png"}
-                alt="Logo"
-                width={150}
-                height={150}
-                className="mx-auto"
+                src={logo || `/logo.png`}
+                alt="logo"
+                width={140}
+                height={140}
+                className="object-contain w-auto h-full"
               />
             </div>
 
             {/* QR Card */}
             <div className="relative bg-white rounded-2xl md:rounded-3xl pb-6 sm:pb-8 md:pb-10 shadow-2xl w-full max-w-sm xl:max-w-full flex flex-col items-center text-center">
-              <div className="bg-transparent rounded-2xl p-2 sm:p-2   mb-2">
+              <div className="bg-transparent rounded-2xl p-2 sm:p-2 mb-2">
                 <QRCodeGenerator
                   url={
                     typeof window !== "undefined"
