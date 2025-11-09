@@ -13,7 +13,7 @@ export default function HomePage() {
 
   const logo = data?.data?.logo;
   const catImage1 = data?.data?.catImage?.[0];
-  const catImage2 = data?.data?.catImage?.[1];
+  const catImage2 = data?.data?.catImage?.[1] || data?.data?.catImage?.[0];
   const heroImage = data?.data?.heroImage;
   const bgColor = data?.data?.backgroundColor;
   const color = data?.data?.color;

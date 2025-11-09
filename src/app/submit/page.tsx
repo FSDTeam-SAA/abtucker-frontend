@@ -21,6 +21,7 @@ export default function SubmitPage() {
     photos: null as File | null,
     serial: "123",
   });
+  
   const [isHovered, setIsHovered] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -32,7 +33,7 @@ export default function SubmitPage() {
   const logo = data?.data?.logo;
   console.log(data?.data);
   //  const catImage1=data?.data.catImage[0];
-  const catImage2 = data?.data.catImage[1];
+  const catImage2 = data?.data.catImage[1] || data?.data.catImage[0];
   const color = data?.data?.color;
 
   const formMutation = useMutation({
@@ -91,9 +92,9 @@ export default function SubmitPage() {
     <div className="min-h-screen relative overflow-hidden">
       {/* First image moved to bottom */}
       <div
-        className="absolute -bottom-3 md:-bottom-10 left-2 md:-left-10 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
+        className="absolute -bottom-3 md:-bottom-10 left-2 md:left-4 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
         style={{
-          transform: "rotate(50deg)",
+          transform: "rotate(45deg)",
         }}
       >
         <Image
@@ -106,12 +107,13 @@ export default function SubmitPage() {
 
       <div className="relative z-10 container mx-auto px-4 sm:px-6 md:px-8 py-8 md:py-12 lg:py-16 min-h-screen flex flex-col items-center justify-center">
         <div className="mb-6 md:mb-8">
-          <div className="flex justify-center lg:justify-start w-[140px] h-[140px]">
+          <div className="flex justify-center lg:justify-start w-auto h-[140px]">
             <Image
               src={logo || `/logo.png`}
               alt="logo"
               width={140}
               height={140}
+              className="object-contain w-auto h-full"
             />
           </div>
         </div>
@@ -200,9 +202,9 @@ export default function SubmitPage() {
                   }
                   placeholder="Your child age"
                   className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg 
-  [&::-webkit-inner-spin-button]:appearance-none 
-  [&::-webkit-outer-spin-button]:appearance-none 
-  [appearance:textfield]"
+                            [&::-webkit-inner-spin-button]:appearance-none 
+                            [&::-webkit-outer-spin-button]:appearance-none 
+                            [appearance:textfield]"
                 />
               </div>
               <div>
