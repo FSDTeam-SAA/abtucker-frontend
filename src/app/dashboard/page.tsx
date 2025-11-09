@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { getStoredUser } from "@/lib/auth";
+import React, { useState } from "react";
 import { Check, X, Eye, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -23,12 +22,26 @@ import Image from "next/image";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Submission, updateSubmission, deleteSubmission } from "@/lib/api";
 import { toast } from "sonner";
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import DashboardHeader from "@/components/dashboard-header";
+import { Calendar } from "@/components/ui/calendar";
+import { ChevronDownIcon } from "lucide-react";
+// import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { useThem } from "@/hooks";
+import Link from "next/link";
 
 export default function DashboardPage() {
-  const user = getStoredUser();
-    const {data:session}=useSession()
-  
+  // const { data: session } = useSession();
+  const [open, setOpen] = React.useState(false);
+  const [date, setDate] = React.useState<Date | undefined>(new Date());
+  const { data: them } = useThem();
+
+  // console.log(date, "hey date ");
   const [filter, setFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSubmission, setSelectedSubmission] =
@@ -97,14 +110,58 @@ export default function DashboardPage() {
     }
   };
 
-  const filteredSubmissions = allSubmissions?.filter(
+  // Bulk approve function
+  const handleBulkApprove = () => {
+    if (!filteredSubmissions || filteredSubmissions.length === 0) {
+      toast.error("No submissions to approve.");
+      return;
+    }
+
+    const pendingSubmissions = filteredSubmissions.filter(
+      (sub: SubmissionType) => sub.status === "pending"
+    );
+
+    if (pendingSubmissions.length === 0) {
+      toast.info("No pending submissions to approve.");
+      return;
+    }
+
+    // Approve each pending submission
+    pendingSubmissions.forEach((submission: SubmissionType) => {
+      updateMutation.mutate({ id: submission._id, status: "active" });
+    });
+
+    toast.success(`Approving ${pendingSubmissions.length} submissions...`);
+  };
+
+  let filteredSubmissions = allSubmissions?.filter(
     (sub: { status: string }) => {
       if (filter === "all") return true;
       return sub.status === filter;
     }
   );
 
-  const totalPages = Math.ceil(filteredSubmissions?.length / itemsPerPage);
+  if (date) {
+    filteredSubmissions = filteredSubmissions?.filter(
+      (item: SubmissionType) => {
+        const itemDate = new Date(item.createdAt)
+          .toUTCString()
+          .split(" ")
+          .slice(0, 4)
+          .join(" ");
+        const selectedDate = date
+          .toUTCString()
+          .split(" ")
+          .slice(0, 4)
+          .join(" ");
+        return itemDate === selectedDate;
+      }
+    );
+  }
+
+  const totalPages = Math.ceil(
+    (filteredSubmissions?.length || 0) / itemsPerPage
+  );
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSubmissions = filteredSubmissions?.slice(
     startIndex,
@@ -119,61 +176,106 @@ export default function DashboardPage() {
     );
   }
 
-  console.log(session?.user,'session')
+  const handleClearDate = () => {
+    setDate(undefined);
+    setOpen(false);
+  };
+
+  const dates = new Date(allSubmissions?.[0]?.createdAt || "");
+  const formate = dates.toUTCString().replace(" 00:45:23 GMT", "");
+  console.log(formate);
+
+  const color = them?.data?.color;
   return (
     <div className="p-8">
       <div className="mb-8">
         <div className="flex items-center justify-between mb-2">
           <div>
             <h1 className="text-3xl font-bold text-primary">
-              Answer&apos;s Submissions
+              Audience Submissions
             </h1>
             <p className="text-gray-600">
               Welcome back! Here&apos;s what&apos;s happening with your app
               today.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Image
-              width={40}
-              height={40}
-              src={`/user.jpg`}
-              alt={user?.name || "User"}
-              className="w-10 h-10 rounded-full"
-            />
-            <div>
-              <div className="font-semibold text-gray-900">
-                {session?.user?.name || "Olivia Rhye"}
-              </div>
-              <div className="text-sm text-gray-600">
-                {session?.user?.email || "olivia@untitledui.com"}
-              </div>
-            </div>
-          </div>
+          <DashboardHeader />
         </div>
       </div>
 
       <div className="bg-white rounded-lg shadow">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
-          <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All</SelectItem>
-              <SelectItem value="active">Approved</SelectItem>
-              <SelectItem value="deactivate">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-5">
+            <Select value={filter} onValueChange={setFilter}>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All</SelectItem>
+                <SelectItem value="active">Approved</SelectItem>
+                <SelectItem value="deactivate">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <div className="flex flex-col gap-3">
+              <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    id="date"
+                    className="w-48 justify-between font-normal"
+                  >
+                    {date ? date.toLocaleDateString() : "Select date"}
+                    <ChevronDownIcon />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  className="w-auto overflow-hidden p-0"
+                  align="start"
+                >
+                  <Calendar
+                    mode="single"
+                    selected={date}
+                    captionLayout="dropdown"
+                    onSelect={(date) => {
+                      setDate(date);
+                      setOpen(false);
+                    }}
+                  />
+                  <div className="p-3 border-t">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleClearDate}
+                      className="w-full cursor-pointer"
+                    >
+                      Clear
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <Link href={'/display'}>
+            
+          <Button
+            style={{ backgroundColor: color }}
+            className={` hover:bg-primary-hover text-white cursor-pointer`}
+          >
+            Go to Display
+          </Button>
+            </Link>
+
 
           <Button
-            onClick={() =>
-              alert("Bulk Approve removed — now handled individually by API.")
-            }
-            className="bg-primary hover:bg-primary-hover text-white"
+            style={{ backgroundColor: color }}
+            onClick={handleBulkApprove}
+            className={` hover:bg-primary-hover text-white cursor-pointer`}
           >
-            Approve All ({filteredSubmissions?.length})
+            Approve All ({filteredSubmissions?.length || 0})
           </Button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -182,6 +284,9 @@ export default function DashboardPage() {
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   Serial
+                </th>
+                <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
+                  Email
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900">
                   User&apos;s Answer
@@ -196,6 +301,11 @@ export default function DashboardPage() {
                 <tr key={submission._id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm text-gray-900">
                     #{submission.serial}
+                  </td>
+                  <td className="px-6 py-4 text-sm text-gray-700">
+                    <div className="line-clamp-2">
+                      {submission.email ? submission.email : "NO Email"}
+                    </div>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-700">
                     <div className="line-clamp-2">{submission.quote}</div>
@@ -247,8 +357,11 @@ export default function DashboardPage() {
         <div className="p-6 border-t border-gray-200 flex items-center justify-between">
           <div className="text-sm text-gray-600">
             Showing {startIndex + 1} to{" "}
-            {Math.min(startIndex + itemsPerPage, filteredSubmissions?.length)}{" "}
-            of {filteredSubmissions?.length} results
+            {Math.min(
+              startIndex + itemsPerPage,
+              filteredSubmissions?.length || 0
+            )}{" "}
+            of {filteredSubmissions?.length || 0} results
           </div>
           <div className="flex items-center gap-2">
             <Button

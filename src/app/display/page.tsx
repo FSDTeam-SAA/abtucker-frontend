@@ -5,6 +5,10 @@ import Image from "next/image";
 import { QRCodeGenerator } from "@/components/qr-code";
 import { useQuery } from "@tanstack/react-query";
 import { Submission } from "@/lib/api";
+import { Child } from "@/types/submition";
+// import { image } from "@/lib/fackdata";
+import { useSideText, useThem } from "@/hooks";
+import Loader from "@/components/Loader";
 
 interface Moment {
   id: number | string;
@@ -40,20 +44,34 @@ function transformApiData(apiData: ApiItem[]): Moment[] {
 export default function DisplayPage() {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { data: them } = useThem();
+  const {data:sidebarImage}=useSideText()
+  // console.log('1 what is the problem',sidebarImage?.sideImage)
 
-  const { data, error, isLoading } = useQuery({
+  const {
+    data: datas,
+
+    isLoading,
+  } = useQuery({
     queryKey: ["submission"],
     queryFn: Submission,
   });
-  console.log("data", data);
-  // Use API data when available, otherwise fallback to localStorage
+  // console.log("data", datas);
+  const data = datas?.filter((item: Child) => item.status === "active");
   useEffect(() => {
     if (data && Array.isArray(data)) {
       const transformedData = transformApiData(data);
-      setMoments(transformedData);
 
-      // Also update localStorage for backup
-      localStorage.setItem("moments", JSON.stringify(transformedData));
+      // ✅ Only update if data actually changed
+      setMoments((prev) => {
+        const prevStr = JSON.stringify(prev);
+        const newStr = JSON.stringify(transformedData);
+        if (prevStr !== newStr) {
+          localStorage.setItem("moments", newStr);
+          return transformedData;
+        }
+        return prev;
+      });
     } else {
       // Fallback to localStorage if no API data
       const stored = localStorage.getItem("moments");
@@ -74,7 +92,7 @@ export default function DisplayPage() {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % moments.length);
-    }, 5000);
+    }, 10000);
 
     return () => clearInterval(interval);
   }, [moments.length]);
@@ -97,54 +115,64 @@ export default function DisplayPage() {
   };
 
   const displayMoments = getDisplayMoments();
-  const borderColors = [
-    "border-purple-500",
-    "border-pink-500",
-    "border-cyan-500",
-  ];
+  // const borderColors = [
+  //   "border-purple-500",
+  //   "border-pink-500",
+  //   "border-cyan-500",
+  // ];
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
-        <div className="text-white text-xl">Loading moments...</div>
-      </div>
-    );
+    return <Loader />;
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
-        <div className="text-white text-xl">Error loading moments</div>
-      </div>
-    );
-  }
-  console.log(displayMoments, "fghjkl");
+  // if (error) {
+  //   return (
+  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
+  //       <div className="text-white text-xl">Error loading moments</div>
+  //     </div>
+  //   );
+  // }
+  const bgColor = them?.data?.backgroundColor;
+  // console.log(bgColor, "fghjk");
+  const gradient = bgColor?.length
+    ? `linear-gradient(135deg,${bgColor.join(", ")})`
+    : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
+  // console.log(gradient, "5");
+
+  const catsImage = them?.data?.catImage[0];
   return (
-    <div className="animated-gradient relative overflow-hidden min-h-screen bg-cover bg-center">
+    <div
+      className="animated-gradient relative overflow-hidden h-screen bg-cover bg-center"
+      style={{
+        background: gradient,
+        backgroundSize: "400% 400%",
+        animation: "gradientShift 15s ease infinite",
+      }}
+    >
       <div
-        className="relative bg-cover bg-center h-screen flex flex-col"
+        className=" relative bg-cover bg-center h-screen flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
-        {/* Decorative Sides */}
+        {/* left  Sides cats */}
         <div
           className="hidden md:flex absolute left-0 top-0 bottom-0 w-16"
           style={{ transform: "rotate(0deg)" }}
         >
           <Image
-            src="/leftside.png"
+            src={sidebarImage?.sideImage||"/leftside.png"}
             alt="left"
             width={1000}
             height={1000}
             className="h-full object-cover"
           />
         </div>
-
+        {/* right sides cats  */}
         <div
           className="hidden md:flex absolute right-0 top-0 bottom-0 w-16"
           style={{ transform: "rotate(180deg)" }}
         >
           <Image
-            src="/leftside.png"
+            src={sidebarImage?.sideImage||"/leftside.png"}
             alt="right"
             width={1000}
             height={1000}
@@ -153,7 +181,7 @@ export default function DisplayPage() {
         </div>
 
         {/* 🔹 Section 1: Logo + QR Code */}
-        <div className="flex justify-between items-center px-6 md:px-16 lg:px-24 pt-5">
+        <div className="flex justify-between items-center px-5 pt-5">
           {/* Logo */}
           <div className="flex-1 flex justify-start">
             <Image
@@ -166,7 +194,7 @@ export default function DisplayPage() {
           </div>
 
           {/* QR Code */}
-          <div className="bg-white p-2 md:p-3 lg:p-4 rounded-xl shadow-lg">
+          <div className="bg-white p-2 md:p-3 lg:p-4 mr-20 rounded-xl max-w-[150px] shadow-lg">
             <QRCodeGenerator
               url={
                 typeof window !== "undefined"
@@ -175,11 +203,12 @@ export default function DisplayPage() {
               }
               size={100}
             />
+            <p className="text-center text-xs">Scan Here!</p>
           </div>
         </div>
 
         {/* 🔹 Section 2: Static 3-Item Grid */}
-        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-20">
+        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-40">
           {displayMoments.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
               {displayMoments.map((moment, index) => (
@@ -187,8 +216,8 @@ export default function DisplayPage() {
                   key={`${moment.id}-${index}`}
                   className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
                     index === 1
-                      ? "scale-110 -mt-8 md:-mt-12 z-20" // middle ta upore
-                      : "scale-100 mt-8 md:mt-12 opacity-90" // left-right ta niche
+                      ? "scale-95 -mt-8 md:-mt-12 z-20"
+                      : "scale-90 mt-8 md:mt-12 opacity-90"
                   }`}
                 >
                   {/* Floating Cat */}
@@ -197,13 +226,13 @@ export default function DisplayPage() {
                       index === 1
                         ? "w-[150px] h-[150px] md:w-[190px] md:h-[190px]"
                         : "w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
-                    } top-8 md:top-10 z-0`}
+                    } top-8 md:top-14 z-0`}
                   >
                     <Image
-                      src="/cakey-hero4.png"
+                      src={catsImage || "/cakey-hero4.png"}
                       alt="decoration"
                       fill
-                      className="object-contain"
+                      className="object-cover"
                       priority
                     />
                   </div>
@@ -211,12 +240,13 @@ export default function DisplayPage() {
                   {/* Photo Card */}
                   <div
                     className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
-                      borderColors[index % borderColors.length]
-                    } ${
                       index === 1
                         ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
                         : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
                     }`}
+                    style={{
+                      borderColor: bgColor?.[index % bgColor.length] || "#000",
+                    }}
                   >
                     <Image
                       src={moment.photo || "/placeholder.svg"}

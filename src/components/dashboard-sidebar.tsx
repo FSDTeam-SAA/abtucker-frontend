@@ -2,10 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { LayoutGrid, Settings, LogOut } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { LayoutGrid, Settings, LogOut, Proportions } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { setStoredUser } from "@/lib/auth";
+// import { setStoredUser } from "@/lib/auth";
 import {
   Dialog,
   DialogContent,
@@ -18,23 +18,35 @@ import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import Image from "next/image";
 import { useThem } from "@/hooks";
+import { signOut } from "next-auth/react";
 
 export function DashboardSidebar() {
   const pathname = usePathname();
-  const router = useRouter();
+  // const router = useRouter();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const { data } = useThem();
   const logo = data?.data?.logo;
-  const handleLogout = () => {
-    setStoredUser(null);
-    router.push("/login");
+  console.log("data them", data?.data?.catImage);
+  const handleLogout = async () => {
+    try {
+      await signOut({
+        redirect: true,
+        callbackUrl: "/login",
+      });
+    } catch (error) {
+      console.error("Logout failed:", error);
+    }
   };
-
   const navItems = [
     {
       href: "/dashboard",
       label: "Answer's Submissions",
       icon: LayoutGrid,
+    },
+    {
+      href: "/dashboard/display",
+      label: "Display",
+      icon: Proportions,
     },
     {
       href: "/dashboard/settings",
@@ -43,22 +55,24 @@ export function DashboardSidebar() {
     },
   ];
 
+  const color = data?.data?.color;
+
   return (
     <>
       <aside className="w-72 bg-white border-r border-gray-200 flex flex-col">
         <div className="p-6">
-        
-            <div className="mt-[40px] flex justify-center">
-              <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
+          <div className="mt-[40px] flex justify-center">
+            <div className="flex justify-center mx-auto  rounded-xl   w-[80px] h-[80px]">
+              <Link href={'/'}>
                 <Image
                   src={logo || `/logo.png`}
                   alt="logo"
                   width={80}
                   height={80}
                 />
-              </div>
+              </Link>
             </div>
-          
+          </div>
         </div>
 
         <nav className="flex-1 px-4 space-y-2">
@@ -67,13 +81,14 @@ export function DashboardSidebar() {
             const isActive = pathname === item.href;
             return (
               <Link
+                style={{
+                  backgroundColor: isActive ? color : undefined,
+                }}
                 key={item.href}
                 href={item.href}
                 className={cn(
                   "flex items-center gap-3 px-4 py-3 rounded-lg transition-colors",
-                  isActive
-                    ? "bg-primary text-white"
-                    : "text-gray-700 hover:bg-gray-100"
+                  isActive ? " text-white" : "text-gray-700 hover:bg-gray-100"
                 )}
               >
                 <Icon className="h-5 w-5" />

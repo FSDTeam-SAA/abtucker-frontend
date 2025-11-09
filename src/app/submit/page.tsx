@@ -7,22 +7,33 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useMutation } from "@tanstack/react-query";
 import { formSubmission } from "@/lib/api";
-import { useThem } from "@/hooks";
+import { useSideText, useThem } from "@/hooks";
+import Link from "next/link";
+// import { image } from "@/lib/fackdata";
 
 export default function SubmitPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     childName: "",
-    age: 0,
+    age: null as number | null,
+    email: "",
     quote: "",
     photos: null as File | null,
     serial: "123",
   });
+  const [isHovered, setIsHovered] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
   const { data } = useThem();
+  // quistion text or side image fetch
+  const { data: sidebarImage } = useSideText();
+  console.log("1 what is the problem", sidebarImage?.question);
   const logo = data?.data?.logo;
+  console.log(data?.data);
+  //  const catImage1=data?.data.catImage[0];
+  const catImage2 = data?.data.catImage[1];
+  const color = data?.data?.color;
 
   const formMutation = useMutation({
     mutationKey: ["submission"],
@@ -55,6 +66,8 @@ export default function SubmitPage() {
       formDataToSent.append("age", String(formData.age));
       formDataToSent.append("quote", formData.quote);
       formDataToSent.append("serial", formData.serial);
+      formDataToSent.append("email", formData.email);
+
       if (formData.photos) {
         formDataToSent.append("photos", formData.photos);
       }
@@ -72,20 +85,22 @@ export default function SubmitPage() {
   const isFormValid =
     formData.childName && formData.quote && formData.photos && agreed;
 
+  console.log("100", catImage2);
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* First image moved to bottom */}
       <div
-        className="absolute -bottom-3 md:-bottom-8 left-2 md:left-2 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
+        className="absolute -bottom-3 md:-bottom-10 left-2 md:-left-10 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
         style={{
           transform: "rotate(50deg)",
         }}
       >
         <Image
-          src="/formbottom.png"
+          src={catImage2 || "/formbottom.png"}
           alt="bottom"
           fill
-          className="object-contain"
+          className="object-cover w-full h-full"
         />
       </div>
 
@@ -104,12 +119,50 @@ export default function SubmitPage() {
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-primary mb-3 md:mb-4 text-center text-balance px-4">
           Fill out a quick submission form
         </h1>
-        <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center max-w-3xl text-balance px-4">
-          Scan the QR code and submit your child&apos;s funniest quotes, photos,
-          and moments—live on the big screen!
+        <p className="text-base sm:text-lg text-[#343A40] mb-8 md:mb-12 text-center  text-balance px-4 md:px-0">
+          Send us your funniest kid quotes, photos, and moments to display live
+          on the big screen! We may feature quotes on the{" "}
+          {/* <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://www.livefromsnacktime.com/"}
+            >
+            </Link>{" "} */}
+          @livefromsnacktime{" "}
+          <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            style={{
+              color: color,
+              borderBottom: `2px solid ${isHovered ? color : "transparent"}`,
+              paddingBottom: "4px",
+              transition: "border-color 0.3s ease",
+            }}
+            href={"https://www.instagram.com/livefromsnacktime/"}
+          >
+            Instagram
+          </Link>{" "}
+          {/* <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://www.facebook.com/livefromsnacktime/"}
+          >
+          </Link>{" "} */}
+          Facebook , and{" "}
+          {/* <Link
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: color }}
+            href={"https://x.com/LiveFromSnackTi"}
+          ></Link> */}
+          X accounts!&rdquo;
         </p>
 
-        <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative">
+        <div className="w-full max-w-6xl p-6 sm:p-8 md:p-12 relative z-40">
           <form
             onSubmit={handleSubmit}
             className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8"
@@ -118,7 +171,7 @@ export default function SubmitPage() {
             <div className="space-y-4 md:space-y-6">
               <div>
                 <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
-                  Your child&apos;s name?
+                  Your child&apos;s first name?
                 </label>
                 <input
                   type="text"
@@ -138,19 +191,38 @@ export default function SubmitPage() {
                 </label>
                 <input
                   type="number"
-                  value={formData.age}
+                  value={formData.age ?? ""}
                   onChange={(e) =>
-                    setFormData({ ...formData, age: Number(e.target.value) })
+                    setFormData({
+                      ...formData,
+                      age: e.target.value === "" ? null : Number(e.target.value),
+                    })
                   }
                   placeholder="Your child age"
+                  className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg 
+  [&::-webkit-inner-spin-button]:appearance-none 
+  [&::-webkit-outer-spin-button]:appearance-none 
+  [appearance:textfield]"
+                />
+              </div>
+              <div>
+                <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
+                  Enter Your Email
+                </label>
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({ ...formData, email: e.target.value })
+                  }
+                  placeholder="Your Email"
                   className="outline-none w-full px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary text-base md:text-lg"
                 />
               </div>
 
               <div>
                 <label className="block text-base md:text-lg font-semibold text-gray-900 mb-2 md:mb-3">
-                  What did your child say, before/during/after the show that
-                  made you laugh or smile?
+                  {sidebarImage?.question}
                 </label>
                 <textarea
                   value={formData.quote}
@@ -158,7 +230,7 @@ export default function SubmitPage() {
                     setFormData({ ...formData, quote: e.target.value })
                   }
                   placeholder="Write your message here..."
-                  className="w-full h-24 md:h-32 px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary resize-none text-base md:text-lg"
+                  className="w-full z-50 h-24 md:h-32 px-4 md:px-6 py-3 md:py-4 border-2 border-gray-300 rounded-xl md:rounded-2xl focus:outline-none focus:border-primary resize-none text-base md:text-lg"
                   required
                 />
               </div>
@@ -217,7 +289,7 @@ export default function SubmitPage() {
                           <p className="text-gray-600 mb-4 text-sm md:text-base">
                             Choose the files you want to upload from your Photo
                           </p>
-                          <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl transition-colors">
+                          {/* <div className="inline-flex items-center justify-center w-10 h-10 md:w-12 md:h-12 bg-primary hover:bg-primary-hover text-white rounded-lg md:rounded-xl transition-colors">
                             <svg
                               className="w-5 h-5 md:w-6 md:h-6"
                               fill="none"
@@ -231,7 +303,7 @@ export default function SubmitPage() {
                                 d="M12 4v16m8-8H4"
                               />
                             </svg>
-                          </div>
+                          </div> */}
                         </>
                       )}
                     </div>
@@ -280,14 +352,14 @@ export default function SubmitPage() {
               {/* Image positioned below the card */}
               <div
                 className="absolute -top-24 md:-top-26 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
-                style={{ transform: "rotate(30deg)" }}
+                style={{ transform: "rotate(35deg)" }}
               >
                 <Image
-                  src="/formright.png"
+                  src={catImage2 || "/openeye.png"}
                   alt="decoration"
-                  width={100}
-                  height={100}
-                  className="object-contain w-full h-full"
+                  width={200}
+                  height={200}
+                  className="object-cover w-full h-full"
                 />
               </div>
             </div>
