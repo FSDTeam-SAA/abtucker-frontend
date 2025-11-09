@@ -92,7 +92,7 @@ export default function SubmitPage() {
     <div className="min-h-screen relative overflow-hidden">
       {/* First image moved to bottom */}
       <div
-        className="absolute -bottom-3 md:-bottom-10 left-2 md:left-4 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
+        className="absolute -bottom-3 md:-bottom-10 -left-2 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
         style={{
           transform: "rotate(45deg)",
         }}
