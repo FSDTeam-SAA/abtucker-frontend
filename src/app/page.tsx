@@ -64,36 +64,39 @@ export default function HomePage() {
 
       {/* Subtle background overlay */}
       <div className="absolute inset-0 bg-cover bg-center opacity-40">
-        <Image src="/bg.png" alt="background" fill className="object-cover" />
+        <Image src="/bg.png" alt="background" fill className="object-contain" />
       </div>
 
       {/* Floating decorative images */}
-      <div className=" lg:block absolute -top-10 -left-10 xl:-left-16 w-32 xl:w-44 h-32 xl:h-44 rotate-[135deg] z-30">
+      <div className=" lg:block absolute top-0 left-0 xl:left-0 w-36 xl:w-44 h-36 xl:h-44  rotate-[135deg] z-10">
         <Image
           src={catImage2 || "/openeye.png"}
           alt="cat-decor-1"
-          fill
-          className="object-cover"
+          width={120}
+          height={120}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
       {/* bottom left  */}
-      <div className=" lg:block absolute -bottom-16 -left-12 xl:-left-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[50deg] z-30">
+      <div className=" lg:block absolute bottom-0 left-0 xl:left-0 w-36 xl:w-44 h-36 xl:h-44  rotate-[50deg] z-30">
         <Image
           src={catImage1 || "/openeye.png"}
           alt="cat-decor-2"
-          fill
-          className="object-cover"
+          width={120}
+          height={120}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
       {/* top right  */}
-      <div className=" lg:block absolute -top-12 -right-10 xl:-right-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[-120deg] z-30">
+      <div className=" lg:block absolute top-0 right-0 xl:right-0 w-36 xl:w-44 h-36 xl:h-44 rotate-[-120deg] z-10">
         <Image
           src={catImage2 || "/openeye.png"}
           alt="cat-decor-3"
-          fill
-          className="object-cover"
+         width={225}
+          height={225}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
@@ -127,7 +130,7 @@ export default function HomePage() {
           {/* Right Section */}
           <div className="w-full xl:w-[36%] flex flex-col items-center gap-6">
             {/* Logo */}
-            <div className="flex justify-center lg:justify-start w-auto h-[140px]">
+            <div className="flex justify-center lg:justify-start w-auto h-[140px] !z-50">
               <Image
                 src={logo || `/logo.png`}
                 alt="logo"
@@ -162,12 +165,13 @@ export default function HomePage() {
               </Link> */}
 
               {/* Bottom floating cat */}
-              <div className="hidden lg:block absolute -bottom-16 -right-24 w-32 xl:w-48 h-32 xl:h-48 z-20">
+              <div className="hidden lg:block absolute -bottom-16 -right-24 w-32 xl:w-44 h-32 xl:h-44 z-20">
                 <Image
                   src={catImage1 || "/cakey-hero4.png"}
                   alt="cat-bottom"
-                  fill
-                  className="object-cover"
+                   width={225}
+          height={225}
+          className="object-contain w-full aspect-square"
                 />
               </div>
             </div>
