@@ -13,7 +13,7 @@ export default function HomePage() {
 
   const logo = data?.data?.logo;
   const catImage1 = data?.data?.catImage?.[0];
-  const catImage2 = data?.data?.catImage?.[1];
+  const catImage2 = data?.data?.catImage?.[1] || data?.data?.catImage?.[0];
   const heroImage = data?.data?.heroImage;
   const bgColor = data?.data?.backgroundColor;
   const color = data?.data?.color;
@@ -64,36 +64,39 @@ export default function HomePage() {
 
       {/* Subtle background overlay */}
       <div className="absolute inset-0 bg-cover bg-center opacity-40">
-        <Image src="/bg.png" alt="background" fill className="object-cover" />
+        <Image src="/bg.png" alt="background" fill className="object-contain" />
       </div>
 
       {/* Floating decorative images */}
-      <div className=" lg:block absolute -top-10 -left-10 xl:-left-16 w-32 xl:w-44 h-32 xl:h-44 rotate-[135deg] z-30">
+      <div className=" lg:block absolute top-0 left-0 xl:left-0 w-36 xl:w-44 h-36 xl:h-44  rotate-[135deg] z-10">
         <Image
           src={catImage2 || "/openeye.png"}
           alt="cat-decor-1"
-          fill
-          className="object-cover"
+          width={120}
+          height={120}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
       {/* bottom left  */}
-      <div className=" lg:block absolute -bottom-16 -left-12 xl:-left-20 w-36 xl:w-56 h-36 xl:h-56 rotate-[50deg] z-30">
+      <div className=" lg:block absolute bottom-0 left-0 xl:left-0 w-36 xl:w-44 h-36 xl:h-44  rotate-[50deg] z-30">
         <Image
           src={catImage1 || "/openeye.png"}
           alt="cat-decor-2"
-          fill
-          className="object-cover"
+          width={120}
+          height={120}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
       {/* top right  */}
-      <div className=" lg:block absolute -top-12 -right-10 xl:-right-16 w-36 xl:w-56 h-36 xl:h-56 rotate-[-120deg] z-30">
+      <div className=" lg:block absolute top-0 right-0 xl:right-0 w-36 xl:w-44 h-36 xl:h-44 rotate-[-120deg] z-10">
         <Image
           src={catImage2 || "/openeye.png"}
           alt="cat-decor-3"
-          fill
-          className="object-cover"
+         width={225}
+          height={225}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
@@ -109,8 +112,8 @@ export default function HomePage() {
               {/* Submit your child&apos;s funniest quotes or photos and see them
               live on the big screen. */}
               Scan to share your child&apos;s funny and heartwarming quotes and
-              photos throughout the show — they might be featured <br /> on the big
-              screen!
+              photos throughout the show — they might be featured <br /> on the
+              big screen!
             </p>
 
             <div className="w-full max-w-[720px] mx-auto">
@@ -127,19 +130,19 @@ export default function HomePage() {
           {/* Right Section */}
           <div className="w-full xl:w-[36%] flex flex-col items-center gap-6">
             {/* Logo */}
-            <div className="w-28 sm:w-32 md:w-36">
+            <div className="flex justify-center lg:justify-start w-auto h-[140px] !z-50">
               <Image
-                src={logo || "/logo.png"}
-                alt="Logo"
-                width={150}
-                height={150}
-                className="mx-auto"
+                src={logo || `/logo.png`}
+                alt="logo"
+                width={140}
+                height={140}
+                className="object-contain w-auto h-full"
               />
             </div>
 
             {/* QR Card */}
             <div className="relative bg-white rounded-2xl md:rounded-3xl pb-6 sm:pb-8 md:pb-10 shadow-2xl w-full max-w-sm xl:max-w-full flex flex-col items-center text-center">
-              <div className="bg-transparent rounded-2xl p-2 sm:p-2   mb-2">
+              <div className="bg-transparent rounded-2xl p-2 sm:p-2 mb-2">
                 <QRCodeGenerator
                   url={
                     typeof window !== "undefined"
@@ -162,12 +165,13 @@ export default function HomePage() {
               </Link> */}
 
               {/* Bottom floating cat */}
-              <div className="hidden lg:block absolute -bottom-16 -right-24 w-32 xl:w-48 h-32 xl:h-48 z-20">
+              <div className="hidden lg:block absolute -bottom-16 -right-24 w-32 xl:w-44 h-32 xl:h-44 z-20">
                 <Image
                   src={catImage1 || "/cakey-hero4.png"}
                   alt="cat-bottom"
-                  fill
-                  className="object-cover"
+                   width={225}
+          height={225}
+          className="object-contain w-full aspect-square"
                 />
               </div>
             </div>

@@ -45,7 +45,7 @@ export default function DisplayPage() {
   const [moments, setMoments] = useState<Moment[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const { data: them } = useThem();
-  const {data:sidebarImage}=useSideText()
+  const { data: sidebarImage } = useSideText();
   // console.log('1 what is the problem',sidebarImage?.sideImage)
 
   const {
@@ -86,7 +86,7 @@ export default function DisplayPage() {
     }
   }, [data]);
 
-  // Auto-rotate every 5 seconds
+  // Auto-rotate every 10 seconds
   useEffect(() => {
     if (moments.length === 0) return;
 
@@ -153,32 +153,36 @@ export default function DisplayPage() {
         className=" relative bg-cover bg-center h-screen flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
-        {/* left  Sides cats */}
+        {/* Left Side Cats */}
+        {/* Left Side Cats */}
         <div
-          className="hidden md:flex absolute left-0 top-0 bottom-0 w-16"
-          style={{ transform: "rotate(0deg)" }}
-        >
-          <Image
-            src={sidebarImage?.sideImage||"/leftside.png"}
-            alt="left"
-            width={1000}
-            height={1000}
-            className="h-full object-cover"
-          />
-        </div>
-        {/* right sides cats  */}
+          className="hidden md:flex absolute left-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-left"
+          style={{
+            backgroundImage: `url(${
+              sidebarImage?.sideImage || "/leftside.png"
+            })`,
+            backgroundSize: "contain auto", // keeps width auto-scaled
+            backgroundPosition: "left top",
+            backgroundRepeat: "repeat-y",
+            backgroundOrigin: "content-box",
+            paddingTop: "20px",
+          }}
+        ></div>
+
+        {/* Right Side Cats */}
         <div
-          className="hidden md:flex absolute right-0 top-0 bottom-0 w-16"
-          style={{ transform: "rotate(180deg)" }}
-        >
-          <Image
-            src={sidebarImage?.sideImage||"/leftside.png"}
-            alt="right"
-            width={1000}
-            height={1000}
-            className="h-full object-cover"
-          />
-        </div>
+          className="hidden md:flex absolute right-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-right"
+          style={{
+            backgroundImage: `url(${
+              sidebarImage?.sideImage || "/leftside.png"
+            })`,
+            backgroundSize: "contain auto",
+            backgroundPosition: "right top",
+            backgroundRepeat: "repeat-y",
+            backgroundOrigin: "content-box",
+            paddingTop: "20px", 
+          }}
+        ></div>
 
         {/* 🔹 Section 1: Logo + QR Code */}
         <div className="flex justify-between items-center px-5 pt-5">
@@ -224,15 +228,15 @@ export default function DisplayPage() {
                   <div
                     className={`relative ${
                       index === 1
-                        ? "w-[150px] h-[150px] md:w-[190px] md:h-[190px]"
+                        ? "w-[150px] aspect-square md:w-[190px] aspect-square"
                         : "w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
-                    } top-8 md:top-14 z-0`}
+                    } top-8 md:top-10 z-0`}
                   >
                     <Image
                       src={catsImage || "/cakey-hero4.png"}
                       alt="decoration"
                       fill
-                      className="object-cover"
+                      className="object-contain  w-full h-full"
                       priority
                     />
                   </div>
