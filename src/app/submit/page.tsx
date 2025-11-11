@@ -21,7 +21,7 @@ export default function SubmitPage() {
     photos: null as File | null,
     serial: "123",
   });
-  
+
   const [isHovered, setIsHovered] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -92,7 +92,7 @@ export default function SubmitPage() {
     <div className="min-h-screen relative overflow-hidden">
       {/* First image moved to bottom */}
       <div
-        className="absolute -bottom-3 md:-bottom-10 -left-2 w-20 md:w-28 lg:w-32 h-20 md:h-28 lg:h-32"
+        className="absolute bottom-0 md:bottom-0 left-0 w-20 md:w-32 lg:w-44 h-20 md:h-32 lg:h-44"
         style={{
           transform: "rotate(45deg)",
         }}
@@ -100,8 +100,9 @@ export default function SubmitPage() {
         <Image
           src={catImage2 || "/formbottom.png"}
           alt="bottom"
-          fill
-          className="object-cover w-full h-full"
+          width={225}
+          height={225}
+          className="object-contain w-full aspect-square"
         />
       </div>
 
@@ -197,7 +198,8 @@ export default function SubmitPage() {
                   onChange={(e) =>
                     setFormData({
                       ...formData,
-                      age: e.target.value === "" ? null : Number(e.target.value),
+                      age:
+                        e.target.value === "" ? null : Number(e.target.value),
                     })
                   }
                   placeholder="Your child age"
@@ -353,15 +355,15 @@ export default function SubmitPage() {
 
               {/* Image positioned below the card */}
               <div
-                className="absolute -top-24 md:-top-26 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
-                style={{ transform: "rotate(35deg)" }}
+                className="absolute -top-24 md:-top-32 -right-28 md:-right-28 w-[200px] md:w-[200px] lg:w-[200px] h-[200px] md:h-[200px] lg:h-[200px] !-z-10"
+                style={{ transform: "rotate(40deg)" }}
               >
                 <Image
                   src={catImage2 || "/openeye.png"}
                   alt="decoration"
                   width={200}
                   height={200}
-                  className="object-cover w-full h-full"
+                  className="object-contain w-full aspect-square"
                 />
               </div>
             </div>
