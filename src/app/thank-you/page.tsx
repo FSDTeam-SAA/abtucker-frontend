@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Confetti from "react-confetti";
-import { useWindowSize } from "react-use";
+// import { useWindowSize } from "react-use";
 import { useThem } from "@/hooks";
 import Link from "next/link";
 import { Instagram } from "lucide-react";
