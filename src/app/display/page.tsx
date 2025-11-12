@@ -153,18 +153,13 @@ export default function DisplayPage() {
         className=" relative bg-cover bg-center h-screen flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
-        {/* Left Side Cats */}
-        {/* Left Side Cats */}
         <div
           className="hidden md:flex absolute left-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-left"
           style={{
             backgroundImage: `url(${
               sidebarImage?.sideImage || "/leftside.png"
             })`,
-            backgroundSize: "contain auto", // keeps width auto-scaled
-            backgroundPosition: "left top",
-            backgroundRepeat: "repeat-y",
-            backgroundOrigin: "content-box",
+            backgroundSize: "contain",
             paddingTop: "20px",
           }}
         ></div>
@@ -176,11 +171,8 @@ export default function DisplayPage() {
             backgroundImage: `url(${
               sidebarImage?.sideImage || "/leftside.png"
             })`,
-            backgroundSize: "contain auto",
-            backgroundPosition: "right top",
-            backgroundRepeat: "repeat-y",
-            backgroundOrigin: "content-box",
-            paddingTop: "20px", 
+            backgroundSize: "contain",
+            paddingTop: "20px",
           }}
         ></div>
 
