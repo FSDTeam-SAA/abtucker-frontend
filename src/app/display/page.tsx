@@ -167,14 +167,14 @@ export default function DisplayPage() {
           </div>
 
           {/* QR Code */}
-          <div className="bg-white p-2 md:p-3 lg:p-4 mr-20 rounded-xl max-w-[150px] shadow-lg">
+          <div className="bg-white p-2 md:p-3 lg:p-4 mr-20 rounded-xl max-w-[180px] shadow-lg">
             <QRCodeGenerator
               url={
                 typeof window !== "undefined"
                   ? `${window.location.origin}/submit`
                   : "/submit"
               }
-              size={100}
+              size={150}
             />
             <p className="text-center text-xs">Scan Here!</p>
           </div>
@@ -186,15 +186,20 @@ export default function DisplayPage() {
             <div className="flex items-center justify-center w-full gap-4 xl:gap-8 2xl:gap-12">
               {displayMoments.map((moment, index) => {
                 const isCenter = index === 1;
+                const isfirst=index ===0;
+                const islast=index===2
 
                 return (
                   <div
                     key={`${moment.id}-${index}`}
                     className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
                       isCenter
-                        ? "scale-105 -mt-8 md:-mt-12 z-20 w-[30%]"
-                        : "scale-95 mt-8 md:mt-12 opacity-90 w-[30%]"
-                    }`}
+                        ? "scale-105 -mt-8 md:-mt-12 2xl:-mt-24 z-20 w-[32%]"
+                        : "scale-95 mt-8 md:mt-12 opacity-90 w-[28%]"
+                    }  
+                    ${isfirst?'2xl:-mt-16 ':''}
+                    ${islast ?'2xl:-mt-16':''}
+                    `}
                   >
                     {/* Floating Cat - Responsive based on container */}
                     <div className="relative w-[25%] aspect-square top-4 md:top-6 lg:-mt-24  z-0 mt-2 lg:top-0">
@@ -209,11 +214,11 @@ export default function DisplayPage() {
 
                     {/* Photo Card - Percentage-based height */}
                     <div
-                      className="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 aspect-[3/4] w-full"
+                      className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 aspect-[3/4] w-full max-h-[50vh] ${isCenter ? 'max-h-[52vh]':''}`}
                       style={{
                         borderColor:
                           bgColor?.[index % bgColor.length] || "#000",
-                        maxHeight: "50vh",
+                       
                       }}
                     >
                       <Image
@@ -263,14 +268,14 @@ export default function DisplayPage() {
                                 <p
                                   className={`font-bold mb-2 leading-normal break-words max-w-[88%] ${
                                     textColors[index % textColors.length]
-                                  } text-xs sm:text-base md:text-sm lg:text-2xl xl:text-3xl`}
+                                  } text-xs sm:text-base md:text-xs lg:text-base xl:text-2xl 2xl:text-3xl`}
                                   style={{
-                                    lineHeight: "1.4",
+                                    lineHeight: "1.2",
                                   }}
                                 >
                                   &ldquo;{moment.quote}&rdquo;
                                 </p>
-                                <p className="text-gray-900 font-bold text-xs sm:text-sm md:text-xs lg:text-lg xl:text-xl  bg-opacity-70 rounded-lg px-4 py-1">
+                                <p className="text-gray-900 font-bold text-xs sm:text-sm md:text-xs lg:text-xs xl:text-base 2xl:text-xl  bg-opacity-70 rounded-lg px-4 py-1">
                                   - {moment.childName}{" "}
                                   {moment.age > 0 ? `${moment.age}` : ""} Years
                                   old
