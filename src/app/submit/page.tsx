@@ -29,7 +29,7 @@ export default function SubmitPage() {
   const { data } = useThem();
   // quistion text or side image fetch
   const { data: sidebarImage } = useSideText();
-  console.log("1 what is the problem", sidebarImage?.question);
+
   const logo = data?.data?.logo;
   console.log(data?.data);
   //  const catImage1=data?.data.catImage[0];
