@@ -206,7 +206,7 @@ export default function DisplayPage() {
         {/* 🔹 Section 2: Static 3-Item Grid */}
         <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-40">
           {displayMoments.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
               {displayMoments.map((moment, index) => (
                 <div
                   key={`${moment.id}-${index}`}
@@ -220,9 +220,9 @@ export default function DisplayPage() {
                   <div
                     className={`relative ${
                       index === 1
-                        ? "w-[150px] aspect-square md:w-[190px] aspect-square"
+                        ? "w-[150px]  md:w-[190px] aspect-square "
                         : "w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
-                    } top-8 md:top-10 z-0`}
+                    } top-8 md:top-10 z-0 mt-4`}
                   >
                     <Image
                       src={catsImage || "/cakey-hero4.png"}
@@ -237,8 +237,8 @@ export default function DisplayPage() {
                   <div
                     className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
                       index === 1
-                        ? "w-[370px] md:w-[480px] h-[460px] md:h-[560px]"
-                        : "w-[320px] md:w-[420px] h-[420px] md:h-[520px]"
+                        ? "w-[370px] lg:w-[480px] h-[460px] lg:h-[560px]"
+                        : "w-[320px] lg:w-[420px] h-[420px] lg:h-[520px]"
                     }`}
                     style={{
                       borderColor: bgColor?.[index % bgColor.length] || "#000",
@@ -260,8 +260,8 @@ export default function DisplayPage() {
                     <div
                       className={`relative flex flex-col items-center text-center ${
                         index === 1
-                          ? "w-[350px] md:w-[440px]"
-                          : "w-[300px] md:w-[380px]"
+                          ? "w-[350px] lg:w-[440px]"
+                          : "w-[300px] lg:w-[380px]"
                       }`}
                     >
                       {(() => {
