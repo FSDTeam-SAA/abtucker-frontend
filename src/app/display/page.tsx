@@ -6,7 +6,6 @@ import { QRCodeGenerator } from "@/components/qr-code";
 import { useQuery } from "@tanstack/react-query";
 import { Submission } from "@/lib/api";
 import { Child } from "@/types/submition";
-// import { image } from "@/lib/fackdata";
 import { useSideText, useThem } from "@/hooks";
 import Loader from "@/components/Loader";
 
@@ -46,23 +45,18 @@ export default function DisplayPage() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const { data: them } = useThem();
   const { data: sidebarImage } = useSideText();
-  // console.log('1 what is the problem',sidebarImage?.sideImage)
 
-  const {
-    data: datas,
-
-    isLoading,
-  } = useQuery({
+  const { data: datas, isLoading } = useQuery({
     queryKey: ["submission"],
     queryFn: Submission,
   });
-  // console.log("data", datas);
+
   const data = datas?.filter((item: Child) => item.status === "active");
+
   useEffect(() => {
     if (data && Array.isArray(data)) {
       const transformedData = transformApiData(data);
 
-      // ✅ Only update if data actually changed
       setMoments((prev) => {
         const prevStr = JSON.stringify(prev);
         const newStr = JSON.stringify(transformedData);
@@ -73,7 +67,6 @@ export default function DisplayPage() {
         return prev;
       });
     } else {
-      // Fallback to localStorage if no API data
       const stored = localStorage.getItem("moments");
       if (stored) {
         try {
@@ -102,11 +95,9 @@ export default function DisplayPage() {
     if (moments.length === 0) return [];
 
     if (moments.length <= 3) {
-      // If we have 3 or fewer items, just return all of them
       return moments;
     }
 
-    // For more than 3 items, return 3 consecutive items starting from currentIndex
     return [
       moments[currentIndex % moments.length],
       moments[(currentIndex + 1) % moments.length],
@@ -115,34 +106,21 @@ export default function DisplayPage() {
   };
 
   const displayMoments = getDisplayMoments();
-  // const borderColors = [
-  //   "border-purple-500",
-  //   "border-pink-500",
-  //   "border-cyan-500",
-  // ];
 
   if (isLoading) {
     return <Loader />;
   }
 
-  // if (error) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-400 to-pink-600">
-  //       <div className="text-white text-xl">Error loading moments</div>
-  //     </div>
-  //   );
-  // }
   const bgColor = them?.data?.backgroundColor;
-  // console.log(bgColor, "fghjk");
   const gradient = bgColor?.length
     ? `linear-gradient(135deg,${bgColor.join(", ")})`
     : "linear-gradient(135deg, #60a5fa, #06b6d4, #a855f7, #ec4899)";
-  // console.log(gradient, "5");
 
   const catsImage = them?.data?.catImage[0];
+
   return (
     <div
-      className="animated-gradient relative overflow-hidden h-screen bg-cover bg-center"
+      className="animated-gradient relative overflow-hidden w-screen h-screen bg-cover bg-center"
       style={{
         background: gradient,
         backgroundSize: "400% 400%",
@@ -150,9 +128,10 @@ export default function DisplayPage() {
       }}
     >
       <div
-        className=" relative bg-cover bg-center h-screen flex flex-col"
+        className="relative bg-cover bg-center w-full h-full flex flex-col"
         style={{ backgroundImage: "url('/bg.png')" }}
       >
+        {/* Sidebars */}
         <div
           className="hidden md:flex absolute left-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-left"
           style={{
@@ -160,11 +139,9 @@ export default function DisplayPage() {
               sidebarImage?.sideImage || "/leftside.png"
             })`,
             backgroundSize: "contain",
-            paddingTop: "20px",
           }}
         ></div>
 
-        {/* Right Side Cats */}
         <div
           className="hidden md:flex absolute right-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-right"
           style={{
@@ -172,11 +149,10 @@ export default function DisplayPage() {
               sidebarImage?.sideImage || "/leftside.png"
             })`,
             backgroundSize: "contain",
-            paddingTop: "20px",
           }}
         ></div>
 
-        {/* 🔹 Section 1: Logo + QR Code */}
+        {/* Header Section */}
         <div className="flex justify-between items-center px-5 pt-5">
           {/* Logo */}
           <div className="flex-1 flex justify-start">
@@ -186,6 +162,7 @@ export default function DisplayPage() {
               width={100}
               height={100}
               className="md:relative md:left-48"
+              priority
             />
           </div>
 
@@ -203,132 +180,143 @@ export default function DisplayPage() {
           </div>
         </div>
 
-        {/* 🔹 Section 2: Static 3-Item Grid */}
-        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center gap-7 -mt-40">
+        {/* Main Content - Percentage-based Cards */}
+        <div className="relative z-10 mx-auto flex-1 flex items-center justify-center w-full px-6 pb-20 ">
           {displayMoments.length > 0 ? (
-            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 md:gap-14 justify-items-center w-full max-w-screen px-6 pb-20">
-              {displayMoments.map((moment, index) => (
-                <div
-                  key={`${moment.id}-${index}`}
-                  className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
-                    index === 1
-                      ? "scale-95 -mt-8 md:-mt-12 z-20"
-                      : "scale-90 mt-8 md:mt-12 opacity-90"
-                  }`}
-                >
-                  {/* Floating Cat */}
-                  <div
-                    className={`relative ${
-                      index === 1
-                        ? "w-[150px]  md:w-[190px] aspect-square "
-                        : "w-[110px] h-[110px] md:w-[140px] md:h-[140px]"
-                    } top-8 md:top-10 z-0 mt-4`}
-                  >
-                    <Image
-                      src={catsImage || "/cakey-hero4.png"}
-                      alt="decoration"
-                      fill
-                      className="object-contain  w-full h-full"
-                      priority
-                    />
-                  </div>
+            <div className="flex items-center justify-center w-full gap-4 xl:gap-8 2xl:gap-12">
+              {displayMoments.map((moment, index) => {
+                const isCenter = index === 1;
 
-                  {/* Photo Card */}
+                return (
                   <div
-                    className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 ${
-                      index === 1
-                        ? "w-[370px] lg:w-[480px] h-[460px] lg:h-[560px]"
-                        : "w-[320px] lg:w-[420px] h-[420px] lg:h-[520px]"
+                    key={`${moment.id}-${index}`}
+                    className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
+                      isCenter
+                        ? "scale-105 -mt-8 md:-mt-12 z-20 w-[30%]"
+                        : "scale-95 mt-8 md:mt-12 opacity-90 w-[30%]"
                     }`}
-                    style={{
-                      borderColor: bgColor?.[index % bgColor.length] || "#000",
-                    }}
                   >
-                    <Image
-                      src={moment.photo || "/placeholder.svg"}
-                      alt={`Moment by ${moment.childName}`}
-                      fill
-                      className="object-cover"
-                      onError={(e) => {
-                        e.currentTarget.src = "/placeholder.svg";
-                      }}
-                    />
-                  </div>
+                    {/* Floating Cat - Responsive based on container */}
+                    <div className="relative w-[25%] aspect-square top-4 md:top-6 lg:-mt-24  z-0 mt-2 lg:top-0">
+                      <Image
+                        src={catsImage || "/cakey-hero4.png"}
+                        alt="decoration"
+                        fill
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
 
-                  {/* Quote Bubble */}
-                  <div className="relative flex justify-center -mt-16 md:-mt-20 z-10">
+                    {/* Photo Card - Percentage-based height */}
                     <div
-                      className={`relative flex flex-col items-center text-center ${
-                        index === 1
-                          ? "w-[350px] lg:w-[440px]"
-                          : "w-[300px] lg:w-[380px]"
-                      }`}
+                      className="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 aspect-[3/4] w-full"
+                      style={{
+                        borderColor:
+                          bgColor?.[index % bgColor.length] || "#000",
+                        maxHeight: "50vh",
+                      }}
                     >
-                      {(() => {
-                        const quoteLength = moment.quote?.length || 0;
-                        // background scale factor
-                        const scale = Math.min(1 + quoteLength / 100, 1.4);
+                      <Image
+                        src={moment.photo || "/placeholder.svg"}
+                        alt={`Moment by ${moment.childName}`}
+                        fill
+                        className="object-cover"
+                        priority
+                        onError={(e) => {
+                          e.currentTarget.src = "/placeholder.svg";
+                        }}
+                      />
+                    </div>
 
-                        const textColors = [
-                          "text-pink-600",
-                          "text-blue-600",
-                          "text-purple-600",
-                        ];
+                    {/* Quote Bubble - Percentage-based width */}
+                    <div className="relative flex justify-center -mt-12 md:-mt-16 z-10 w-full">
+                      <div className="relative flex flex-col items-center text-center w-[90%]">
+                        {(() => {
+                          const quoteLength = moment.quote?.length || 0;
+                          const scale = Math.min(1 + quoteLength / 100, 1.3);
+                          const textColors = [
+                            "text-pink-600",
+                            "text-blue-600",
+                            "text-purple-600",
+                          ];
 
-                        return (
-                          <div className="relative w-full">
-                            {/* Background image scales */}
-                            <div
-                              className="transition-transform duration-300 origin-center"
-                              style={{
-                                transform: `scale(${scale})`,
-                              }}
-                            >
-                              <Image
-                                src="/text.png"
-                                alt="text background"
-                                width={440}
-                                height={260}
-                                className={`w-full h-auto select-none pointer-events-none `}
-                                draggable={false}
-                              />
-                            </div>
-
-                            {/* Text Layer - stays normal size */}
-                            <div className="absolute inset-0 flex flex-col justify-center items-center px-5 md:px-8 text-center">
-                              <p
-                                className={`text-sm md:text-lg font-bold mb-2 leading-snug break-words max-w-[85%] ${
-                                  textColors[index % textColors.length]
-                                }`}
+                          return (
+                            <div className="relative w-full lg:w-[90%]">
+                              {/* Background image scales */}
+                              <div
+                                className="transition-transform duration-300 origin-center"
+                                style={{ transform: `scale(${scale})` }}
                               >
-                                &ldquo;{moment.quote}&rdquo;
-                              </p>
-                              <p className="text-xs md:text-sm text-gray-700 font-medium">
-                                - {moment.childName}{" "}
-                                {moment.age > 0 ? `${moment.age}` : ""} Years
-                                old
-                              </p>
+                                <Image
+                                  src="/text.png"
+                                  alt="text background"
+                                  width={400}
+                                  height={240}
+                                  className="w-full h-auto select-none pointer-events-none"
+                                  draggable={false}
+                                  priority
+                                />
+                              </div>
+
+                              {/* Text Layer */}
+                              <div className="absolute inset-0 flex flex-col justify-center items-center px-4 text-center">
+                                <p
+                                  className={`font-bold mb-2 leading-normal break-words max-w-[88%] ${
+                                    textColors[index % textColors.length]
+                                  } text-xs sm:text-base md:text-sm lg:text-2xl xl:text-3xl`}
+                                  style={{
+                                    lineHeight: "1.4",
+                                  }}
+                                >
+                                  &ldquo;{moment.quote}&rdquo;
+                                </p>
+                                <p className="text-gray-900 font-bold text-xs sm:text-sm md:text-xs lg:text-lg xl:text-xl  bg-opacity-70 rounded-lg px-4 py-1">
+                                  - {moment.childName}{" "}
+                                  {moment.age > 0 ? `${moment.age}` : ""} Years
+                                  old
+                                </p>
+                              </div>
                             </div>
-                          </div>
-                        );
-                      })()}
+                          );
+                        })()}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="text-center px-4">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
                 No moments yet!
               </h2>
-              <p className="text-lg md:text-xl text-white">
+              <p className="text-lg md:text-xl lg:text-2xl text-white">
                 Scan the QR code to submit your first moment.
               </p>
             </div>
           )}
         </div>
       </div>
+
+      {/* Add CSS for gradient animation and aspect ratio */}
+      <style jsx>{`
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%;
+          }
+        }
+
+        /* Ensure aspect ratio works consistently */
+        .aspect-\\[3\\/4\\] {
+          aspect-ratio: 3/4;
+        }
+      `}</style>
     </div>
   );
 }
