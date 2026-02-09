@@ -35,7 +35,7 @@ export default function LoginPage() {
       password,
     });
   
-
+    console.log('res',res)
     if (res?.error) {
       setError("Invalid credentials. Please try again.");
     } else if (res?.ok) {
