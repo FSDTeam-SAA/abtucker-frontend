@@ -18,7 +18,7 @@ const handler = NextAuth({
         );
 
         try {
-          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}auth/login`;
+          const apiUrl = `${process.env.NEXT_PUBLIC_API_URL}/auth/login`;
           console.log("🌐 Calling API endpoint:", apiUrl);
 
           const res = await fetch(apiUrl, {
