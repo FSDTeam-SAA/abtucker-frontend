@@ -178,7 +178,9 @@ export default function DisplayPage() {
               }
               size={110}
             />
-            <p className="text-center text-[10px] text-gray-600 mt-1 font-medium">Scan Here!</p>
+            <p className="text-center text-[10px] text-gray-600 mt-1 font-medium">
+              Scan Here!
+            </p>
           </div>
         </div>
 
@@ -188,8 +190,8 @@ export default function DisplayPage() {
             <div className="flex items-center justify-center w-full gap-4 xl:gap-8 2xl:gap-12">
               {displayMoments.map((moment, index) => {
                 const isCenter = index === 1;
-                const isfirst=index ===0;
-                const islast=index===2
+                const isfirst = index === 0;
+                const islast = index === 2;
 
                 return (
                   <div
@@ -226,56 +228,69 @@ export default function DisplayPage() {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
-                      
+
                       {/* Subtle Vignette for Premium Depth */}
                       <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/10" />
                     </div>
 
-                    {/* Quote Bubble - Adjusted for no cropping */}
+                    {/* Quote Bubble - Rectangular Frame Style */}
                     <div className="relative flex justify-center -mt-12 md:-mt-16 z-10 w-full">
                       <div className="relative flex flex-col items-center text-center w-[85%] lg:w-[80%]">
                         {(() => {
-                          const quoteLength = moment.quote?.length || 0;
-                          const scale = Math.min(1 + quoteLength / 120, 1.25);
-                          const textColors = [
-                            "text-pink-600",
-                            "text-blue-600",
-                            "text-purple-600",
-                          ];
+                          // Generate different text colors from theme colors
+                          const themeColors = them?.data?.backgroundColor || ["#a855f7", "#d8b4fe", "#60a5fa"];
+                          
+                          // Convert hex to RGB for text
+                          const hexToRgb = (hex: string) => {
+                            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : hex;
+                          };
 
                           return (
-                            <div className="relative w-full lg:w-[90%]">
-                              {/* Background image scales */}
-                              <div
-                                className="transition-transform duration-300 origin-center"
-                                style={{ transform: `scale(${scale})` }}
-                              >
-                                <Image
-                                  src="/text.png"
-                                  alt="text background"
-                                  width={400}
-                                  height={240}
-                                  className="w-full h-auto select-none pointer-events-none"
-                                  draggable={false}
-                                  priority
-                                />
+                            <div
+                              className="relative w-full lg:w-[95%] bg-yellow-50 rounded-sm border-8 px-6 py-8 shadow-xl"
+                              style={{
+                                background:
+                                  "linear-gradient(135deg, #fefce8 0%, #fffacd 100%)",
+                                borderColor: themeColors[index % themeColors.length],
+                                boxShadow: `0 0 20px ${hexToRgb(themeColors[index % themeColors.length])}40`,
+                              }}
+                            >
+                              {/* Decorative corners - stars */}
+                              <div className="absolute -top-2 -left-2 text-xl">
+                                ✨
+                              </div>
+                              <div className="absolute -top-2 -right-2 text-xl">
+                                ✨
+                              </div>
+                              <div className="absolute -bottom-2 -left-2 text-xl">
+                                ⭐
+                              </div>
+                              <div className="absolute -bottom-2 -right-2 text-xl">
+                                ⭐
                               </div>
 
                               {/* Text Layer */}
-                              <div className="absolute inset-0 flex flex-col justify-center items-center px-6 pb-4 text-center">
+                              <div className="flex flex-col justify-center items-center text-center">
                                 <p
-                                  className={`font-bold leading-tight break-words max-w-[82%] ${
-                                    textColors[index % textColors.length]
-                                  } text-[10px] sm:text-sm md:text-[10px] lg:text-sm xl:text-lg 2xl:text-xl`}
+                                  className="font-bold leading-tight break-words max-w-full text-[11px] sm:text-sm md:text-[11px] lg:text-base xl:text-lg 2xl:text-xl"
                                   style={{
-                                    lineHeight: "1.1",
+                                    lineHeight: "1.2",
+                                    color: themeColors[index % themeColors.length],
                                   }}
                                 >
                                   &ldquo;{moment.quote}&rdquo;
                                 </p>
-                                <p className="text-gray-900 font-bold mt-1 text-[8px] sm:text-[10px] md:text-[8px] lg:text-xs xl:text-base 2xl:text-lg opacity-80">
-                                  - {moment.childName}{" "}
-                                  {moment.age > 0 ? `${moment.age}` : ""}y
+                                <p 
+                                  className="font-bold mt-3 text-[9px] sm:text-[10px] md:text-[9px] lg:text-sm xl:text-base 2xl:text-lg"
+                                  style={{
+                                    color: themeColors[(index + 1) % themeColors.length],
+                                  }}
+                                >
+                                  – {moment.childName}{" "}
+                                  {moment.age > 0
+                                    ? `${moment.age} Years old`
+                                    : ""}
                                 </p>
                               </div>
                             </div>
