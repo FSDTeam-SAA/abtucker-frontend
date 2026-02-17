@@ -132,7 +132,7 @@ export default function DisplayPage() {
         style={{ backgroundImage: "url('/bg.png')" }}
       >
         {/* Sidebars */}
-        <div
+        {/* <div
           className="hidden md:flex absolute left-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-left"
           style={{
             backgroundImage: `url(${
@@ -140,9 +140,11 @@ export default function DisplayPage() {
             })`,
             backgroundSize: "contain",
           }}
-        ></div>
+        >
 
-        <div
+        </div> */}
+
+        {/* <div
           className="hidden md:flex absolute right-0 top-0 bottom-0 w-16 h-full bg-repeat-y bg-right"
           style={{
             backgroundImage: `url(${
@@ -150,33 +152,35 @@ export default function DisplayPage() {
             })`,
             backgroundSize: "contain",
           }}
-        ></div>
+        ></div> */}
 
         {/* Header Section */}
         <div className="flex justify-between items-center px-5 pt-5">
           {/* Logo */}
-          <div className="flex-1 flex justify-start">
+          <div className="flex-1 flex justify-start -mt-4">
             <Image
               src="/logo.png"
               alt="logo"
               width={100}
               height={100}
-              className="md:relative md:left-48"
+              className="md:relative md:left-48 drop-shadow-sm"
               priority
             />
           </div>
 
           {/* QR Code */}
-          <div className="bg-white p-2 md:p-3 lg:p-4 mr-20 rounded-xl max-w-[180px] shadow-lg">
+          <div className="bg-white p-2 md:p-3 mr-20 rounded-xl max-w-[140px] shadow-lg border border-white/20">
             <QRCodeGenerator
               url={
                 typeof window !== "undefined"
                   ? `${window.location.origin}/submit`
                   : "/submit"
               }
-              size={150}
+              size={110}
             />
-            <p className="text-center text-xs">Scan Here!</p>
+            <p className="text-center text-[10px] text-gray-600 mt-1 font-medium">
+              Scan Here!
+            </p>
           </div>
         </div>
 
@@ -186,20 +190,15 @@ export default function DisplayPage() {
             <div className="flex items-center justify-center w-full gap-4 xl:gap-8 2xl:gap-12">
               {displayMoments.map((moment, index) => {
                 const isCenter = index === 1;
-                const isfirst=index ===0;
-                const islast=index===2
+                const isfirst = index === 0;
+                const islast = index === 2;
 
                 return (
                   <div
                     key={`${moment.id}-${index}`}
-                    className={`flex flex-col items-center text-center relative transition-all duration-500 ease-in-out ${
-                      isCenter
-                        ? "scale-105 -mt-8 md:-mt-12 2xl:-mt-24 z-20 w-[32%]"
-                        : "scale-95 mt-8 md:mt-12 opacity-90 w-[28%]"
-                    }  
-                    ${isfirst?'2xl:-mt-16 ':''}
-                    ${islast ?'2xl:-mt-16':''}
-                    `}
+                    className={`flex flex-col items-center text-center relative transition-all duration-700 ease-in-out w-[30%] xl:w-[28%] 2xl:w-[26%] ${
+                      isCenter ? "z-30 -mt-24 md:-mt-28" : "z-10 -mt-4 md:-mt-8"
+                    }`}
                   >
                     {/* Floating Cat - Responsive based on container */}
                     <div className="relative w-[25%] aspect-square top-4 md:top-6 lg:-mt-24  z-0 mt-2 lg:top-0">
@@ -212,73 +211,86 @@ export default function DisplayPage() {
                       />
                     </div>
 
-                    {/* Photo Card - Percentage-based height */}
+                    {/* Photo Card - Full-Bleed & Head-Prioritized (Zero White Space) */}
                     <div
-                      className={`relative bg-white rounded-3xl overflow-hidden shadow-2xl border-8 aspect-[3/4] w-full max-h-[50vh] ${isCenter ? 'max-h-[52vh]':''}`}
-                      style={{
-                        borderColor:
-                          bgColor?.[index % bgColor.length] || "#000",
-                       
-                      }}
+                      className={`relative bg-white rounded-[1.5rem] shadow-[0_40px_80px_-15px_rgba(0,0,0,0.5)] border-[12px] border-white overflow-hidden transition-all duration-700 ease-in-out ${
+                        isCenter ? "scale-105" : "scale-95 opacity-90"
+                      } aspect-[3/4] w-full max-h-[55vh] md:max-h-[60vh] lg:max-h-[65vh]`}
                     >
                       <Image
                         src={moment.photo || "/placeholder.svg"}
                         alt={`Moment by ${moment.childName}`}
                         fill
-                        className="object-cover"
+                        className="object-cover object-top"
+                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         priority
                         onError={(e) => {
                           e.currentTarget.src = "/placeholder.svg";
                         }}
                       />
+
+                      {/* Subtle Vignette for Premium Depth */}
+                      <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/10" />
                     </div>
 
-                    {/* Quote Bubble - Percentage-based width */}
+                    {/* Quote Bubble - Rectangular Frame Style */}
                     <div className="relative flex justify-center -mt-12 md:-mt-16 z-10 w-full">
-                      <div className="relative flex flex-col items-center text-center w-[90%]">
+                      <div className="relative flex flex-col items-center text-center w-[85%] lg:w-[80%]">
                         {(() => {
-                          const quoteLength = moment.quote?.length || 0;
-                          const scale = Math.min(1 + quoteLength / 100, 1.3);
-                          const textColors = [
-                            "text-pink-600",
-                            "text-blue-600",
-                            "text-purple-600",
-                          ];
+                          // Generate different text colors from theme colors
+                          const themeColors = them?.data?.backgroundColor || ["#a855f7", "#d8b4fe", "#60a5fa"];
+                          
+                          // Convert hex to RGB for text
+                          const hexToRgb = (hex: string) => {
+                            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                            return result ? `rgb(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)})` : hex;
+                          };
 
                           return (
-                            <div className="relative w-full lg:w-[90%]">
-                              {/* Background image scales */}
-                              <div
-                                className="transition-transform duration-300 origin-center"
-                                style={{ transform: `scale(${scale})` }}
-                              >
-                                <Image
-                                  src="/text.png"
-                                  alt="text background"
-                                  width={400}
-                                  height={240}
-                                  className="w-full h-auto select-none pointer-events-none"
-                                  draggable={false}
-                                  priority
-                                />
+                            <div
+                              className="relative w-full lg:w-[95%] bg-yellow-50 rounded-sm border-8 px-6 py-8 shadow-xl"
+                              style={{
+                                background:
+                                  "linear-gradient(135deg, #fefce8 0%, #fffacd 100%)",
+                                borderColor: themeColors[index % themeColors.length],
+                                boxShadow: `0 0 20px ${hexToRgb(themeColors[index % themeColors.length])}40`,
+                              }}
+                            >
+                              {/* Decorative corners - stars */}
+                              <div className="absolute -top-2 -left-2 text-xl">
+                                ✨
+                              </div>
+                              <div className="absolute -top-2 -right-2 text-xl">
+                                ✨
+                              </div>
+                              <div className="absolute -bottom-2 -left-2 text-xl">
+                                ⭐
+                              </div>
+                              <div className="absolute -bottom-2 -right-2 text-xl">
+                                ⭐
                               </div>
 
                               {/* Text Layer */}
-                              <div className="absolute inset-0 flex flex-col justify-center items-center px-4 text-center">
+                              <div className="flex flex-col justify-center items-center text-center">
                                 <p
-                                  className={`font-bold mb-2 leading-normal break-words max-w-[88%] ${
-                                    textColors[index % textColors.length]
-                                  } text-xs sm:text-base md:text-xs lg:text-base xl:text-2xl 2xl:text-3xl`}
+                                  className="font-bold leading-tight break-words max-w-full text-[11px] sm:text-sm md:text-[11px] lg:text-base xl:text-lg 2xl:text-xl"
                                   style={{
                                     lineHeight: "1.2",
+                                    color: themeColors[index % themeColors.length],
                                   }}
                                 >
                                   &ldquo;{moment.quote}&rdquo;
                                 </p>
-                                <p className="text-gray-900 font-bold text-xs sm:text-sm md:text-xs lg:text-xs xl:text-base 2xl:text-xl  bg-opacity-70 rounded-lg px-4 py-1">
-                                  - {moment.childName}{" "}
-                                  {moment.age > 0 ? `${moment.age}` : ""} Years
-                                  old
+                                <p 
+                                  className="font-bold mt-3 text-[9px] sm:text-[10px] md:text-[9px] lg:text-sm xl:text-base 2xl:text-lg"
+                                  style={{
+                                    color: themeColors[(index + 1) % themeColors.length],
+                                  }}
+                                >
+                                  – {moment.childName}{" "}
+                                  {moment.age > 0
+                                    ? `${moment.age} Years old`
+                                    : ""}
                                 </p>
                               </div>
                             </div>
